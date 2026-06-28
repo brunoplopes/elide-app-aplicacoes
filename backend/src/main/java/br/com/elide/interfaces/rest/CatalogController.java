@@ -1,0 +1,41 @@
+package br.com.elide.interfaces.rest;
+
+import br.com.elide.application.CatalogService;
+import br.com.elide.application.dto.MarketplaceDtos.CategoryResponse;
+import br.com.elide.application.dto.MarketplaceDtos.ProductResponse;
+import br.com.elide.application.dto.MarketplaceDtos.StoreResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/catalog")
+public class CatalogController {
+    private final CatalogService catalogService;
+
+    public CatalogController(CatalogService catalogService) {
+        this.catalogService = catalogService;
+    }
+
+    @GetMapping("/categories")
+    public List<CategoryResponse> categories() {
+        return catalogService.categories();
+    }
+
+    @GetMapping("/stores")
+    public Page<StoreResponse> stores(Pageable pageable) {
+        return catalogService.stores(pageable);
+    }
+
+    @GetMapping("/stores/{storeId}/products")
+    public Page<ProductResponse> products(@PathVariable UUID storeId, Pageable pageable) {
+        return catalogService.products(storeId, pageable);
+    }
+}
+

@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: elide-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:elide}
+    username: ${DB_USER:elide}
+    password: ${DB_PASSWORD:elide}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+        format_sql: true
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:elide}
+    password: ${RABBITMQ_PASSWORD:elide}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+elide:
+  security:
+    jwt-secret: ${JWT_SECRET:change-this-development-secret-with-at-least-64-characters}
+    access-token-minutes: ${JWT_ACCESS_MINUTES:30}
+    refresh-token-days: ${JWT_REFRESH_DAYS:14}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+  bootstrap:
+    admin-username: ${ELIDE_BOOTSTRAP_ADMIN_USERNAME:leonardo_admin}
+    admin-password: ${ELIDE_BOOTSTRAP_ADMIN_PASSWORD:elide.com.leo.2026}
+    enabled: ${ELIDE_BOOTSTRAP_ADMIN_ENABLED:true}
+

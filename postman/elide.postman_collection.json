@@ -1,0 +1,44 @@
+{
+  "info": {
+    "name": "ELIDE API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"leonardo_admin\",\"password\":\"elide.com.leo.2026\"}"
+        }
+      }
+    },
+    {
+      "name": "Admin Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/v1/admin/dashboard"
+      }
+    },
+    {
+      "name": "Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"storeId\":\"00000000-0000-0000-0000-000000000001\",\"items\":[{\"productId\":\"00000000-0000-0000-0000-000000000010\",\"quantity\":1,\"note\":\"sem cebola\"}],\"paymentMethod\":\"PIX\",\"addressId\":null,\"couponCode\":null}"
+        }
+      }
+    }
+  ],
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:8080" }]
+}

@@ -1,0 +1,17 @@
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+.angular/
+.gradle/
+build/
+out/
+*.log
+*.class
+*.iml
+docker-data/
+backups/*.dump
+backups/*.sql
