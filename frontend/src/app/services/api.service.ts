@@ -28,6 +28,14 @@ export class ApiService {
     return this.http.post<AuthResponse>(`${API_URL}/auth/register`, payload);
   }
 
+  forgotPassword(identifier: string): Observable<void> {
+    return this.http.post<void>(`${API_URL}/auth/forgot-password`, { identifier });
+  }
+
+  changePassword(payload: { currentPassword: string; newPassword: string; confirmPassword: string }): Observable<void> {
+    return this.http.post<void>(`${API_URL}/auth/change-password`, payload);
+  }
+
   categories(): Observable<Category[]> {
     if (!this.isBrowser) {
       return of([]);

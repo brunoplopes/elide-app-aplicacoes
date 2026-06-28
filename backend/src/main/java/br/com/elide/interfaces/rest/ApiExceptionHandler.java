@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.NoSuchElementException;
+
 @RestControllerAdvice
 public class ApiExceptionHandler {
     @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class})
@@ -16,5 +18,12 @@ public class ApiExceptionHandler {
         detail.setDetail(exception.getMessage());
         return detail;
     }
-}
 
+    @ExceptionHandler(NoSuchElementException.class)
+    ProblemDetail notFound(NoSuchElementException exception) {
+        var detail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        detail.setTitle("Resource not found");
+        detail.setDetail(exception.getMessage());
+        return detail;
+    }
+}

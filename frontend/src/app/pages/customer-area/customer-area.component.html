@@ -1,24 +1,28 @@
 <section class="elide-section">
   <elide-client-heading
-    [eyebrow]="page.vm.eyebrow"
-    [title]="page.vm.title"
-    [description]="page.vm.description"
-    [actionLabel]="page.vm.actionLabel ?? ''"
-    [actionIcon]="page.vm.actionIcon ?? 'arrow_forward'"
-    [actionLink]="page.vm.actionLink ?? '/'"
+    [eyebrow]="page.vm().eyebrow"
+    [title]="page.vm().title"
+    [description]="page.vm().description"
+    [actionLabel]="page.vm().actionLabel ?? ''"
+    [actionIcon]="page.vm().actionIcon ?? 'arrow_forward'"
+    [actionLink]="page.vm().actionLink ?? '/'"
   />
 
-  @if (page.vm.metrics?.length) {
+  @if (page.error()) {
+    <div class="api-note"><mat-icon>info</mat-icon><span>{{ page.error() }}</span><button mat-button type="button" (click)="page.load()">Atualizar</button></div>
+  }
+
+  @if (page.vm().metrics?.length) {
     <div class="metric-grid">
-      @for (metric of page.vm.metrics; track metric.label) {
+      @for (metric of page.vm().metrics; track metric.label) {
         <elide-metric-card [label]="metric.label" [value]="metric.value" [icon]="metric.icon" />
       }
     </div>
   }
 
-  @if (page.vm.actions?.length) {
+  @if (page.vm().actions?.length) {
     <div class="action-grid">
-      @for (action of page.vm.actions; track action.path) {
+      @for (action of page.vm().actions; track action.path) {
         <a class="feature-card" [routerLink]="action.path">
           <mat-icon>{{ action.icon }}</mat-icon>
           <strong>{{ action.label }}</strong>
@@ -28,9 +32,9 @@
     </div>
   }
 
-  @if (page.vm.cards?.length) {
+  @if (page.vm().cards?.length) {
     <div class="action-grid">
-      @for (card of page.vm.cards; track card.title) {
+      @for (card of page.vm().cards; track card.title) {
         <article class="feature-card">
           <mat-icon>{{ card.icon }}</mat-icon>
           <strong>{{ card.title }}</strong>

@@ -1,18 +1,26 @@
 <section class="elide-section">
   <elide-client-heading title="Historico de pedidos" description="Acompanhe pedidos recentes, status, reembolso e recompra." actionLabel="Rastrear atual" actionIcon="near_me" actionLink="/rastreamento" />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
   <div class="order-list">
-    @for (order of page.orders; track order.id) {
+    @for (order of page.orders(); track order.id) {
       <article class="order-card">
         <div>
-          <h2>{{ order.id }} · {{ order.store }}</h2>
-          <p>{{ order.status }} · {{ order.total }}</p>
+          <h2>{{ page.shortId(order.id) }}</h2>
+          <p>{{ page.statusLabel(order.status) }} · {{ page.money(order.total) }}</p>
         </div>
         <div class="order-actions">
           <button mat-button type="button">Recomprar</button>
           <button mat-button type="button">Reembolso</button>
           <button mat-flat-button type="button">Avaliar</button>
         </div>
-        <mat-progress-bar mode="determinate" [value]="order.progress" />
+        <mat-progress-bar mode="determinate" [value]="page.progress(order.status)" />
+      </article>
+    } @empty {
+      <article class="order-card">
+        <div>
+          <h2>Nenhum pedido encontrado</h2>
+          <p>Quando voce finalizar um pedido, ele aparecera aqui via API.</p>
+        </div>
       </article>
     }
   </div>

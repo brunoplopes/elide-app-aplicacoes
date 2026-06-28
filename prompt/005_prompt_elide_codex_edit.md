@@ -17,7 +17,7 @@ Na aplicação, ela deve ser armazenada **criptografada com BCrypt**.
 
 No primeiro acesso, o administrador deve ser obrigado a alterar a senha inicial.
 
-Funcionalidades e ermissões do administrador:
+Funcionalidades e permissões do administrador no backend e frontend:
 
 - CRUD de lojas
 - CRUD de categorias
@@ -28,6 +28,7 @@ Funcionalidades e ermissões do administrador:
 - CRUD de administradores
 - Cadastro e Aprovação de estabelecimentos
 - Cadastro e Aprovação de entregadores
+- Cadastro e Aprovação novos administradores ADMIN
 - Visualização de todos os pedidos
 - Gestão financeira
 - Dashboard

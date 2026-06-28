@@ -5,7 +5,7 @@ public final class Enums {
     }
 
     public enum RoleName {
-        MASTER_ADMIN, ADMIN, CUSTOMER, STORE_OWNER, COURIER
+        MASTER_ADMIN, ADMIN, CUSTOMER, STORE_OWNER, STORE_USER, COURIER
     }
 
     public enum StoreStatus {
@@ -32,4 +32,3 @@ public final class Enums {
         WEBSOCKET, FCM, EMAIL, SMS, WHATSAPP
     }
 }
-

@@ -42,7 +42,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/catalog/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "MASTER_ADMIN")
-                .requestMatchers("/api/v1/store/**").hasAnyRole("STORE_OWNER", "ADMIN", "MASTER_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/store/signup").authenticated()
+                .requestMatchers("/api/v1/store/**").hasAnyRole("STORE_OWNER", "STORE_USER", "ADMIN", "MASTER_ADMIN")
                 .requestMatchers("/api/v1/courier/**").hasAnyRole("COURIER", "ADMIN", "MASTER_ADMIN")
                 .anyRequest().authenticated()
             )
@@ -81,4 +82,3 @@ public class SecurityConfig {
         return source;
     }
 }
-

@@ -22,3 +22,7 @@ Funcionalidades:
 
 Backend:
 - Crie uma nova RoleName STORE_USER no backend para controle de permissão
+- implemente todas as funcionalidades do Estabelecimento no backend
+
+Frontend
+- Implemente as chamadas para api do Estabelecimento no frontend

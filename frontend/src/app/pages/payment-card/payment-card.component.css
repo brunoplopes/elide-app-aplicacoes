@@ -28,6 +28,12 @@
   font-weight: 800;
 }
 
+.api-message {
+  margin: 0;
+  color: var(--elide-orange);
+  font-weight: 800;
+}
+
 .card-preview {
   display: grid;
   align-content: end;

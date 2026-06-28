@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
+import { storeGuard } from './guards/store.guard';
 import { ShellLayoutComponent } from './layouts/shell-layout.component';
 
 export const routes: Routes = [
@@ -37,7 +38,7 @@ export const routes: Routes = [
       { path: 'pagamentos/dinheiro', canActivate: [authGuard], loadComponent: () => import('./pages/payment-cash/payment-cash.component').then((m) => m.PaymentCashPageComponent) },
       { path: 'rastreamento', canActivate: [authGuard], loadComponent: () => import('./pages/tracking/tracking.component').then((m) => m.TrackingPageComponent) },
       { path: 'cliente', canActivate: [authGuard], loadComponent: () => import('./pages/customer-area/customer-area.component').then((m) => m.CustomerAreaPageComponent) },
-      { path: 'loja', canActivate: [authGuard], loadComponent: () => import('./pages/store-area/store-area.component').then((m) => m.StoreAreaPageComponent) },
+      { path: 'loja', canActivate: [storeGuard], loadComponent: () => import('./pages/store-area/store-area.component').then((m) => m.StoreAreaPageComponent) },
       { path: 'area-loja', redirectTo: 'loja', pathMatch: 'full' },
       { path: 'entregador', canActivate: [authGuard], loadComponent: () => import('./pages/courier-area/courier-area.component').then((m) => m.CourierAreaPageComponent) },
       { path: 'admin', canActivate: [adminGuard], loadComponent: () => import('./pages/admin-panel/admin-panel.component').then((m) => m.AdminPanelPageComponent) },

@@ -10,5 +10,6 @@ h2 { margin: 0; font-weight: 900; }
 .summary div, footer { display: flex; justify-content: space-between; gap: 1rem; }
 .discount { color: var(--elide-orange); }
 footer { border-top: 1px solid var(--elide-border); padding-top: 1rem; font-size: 1.15rem; }
+.api-message { margin: 0; color: var(--elide-orange); font-weight: 800; }
 button { height: 42px; border-radius: 12px !important; background: var(--elide-gradient) !important; color: white !important; }
 @media (max-width: 860px) { .checkout-grid { grid-template-columns: 1fr; } }

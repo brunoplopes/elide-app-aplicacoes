@@ -19,7 +19,8 @@
         <span>Troco estimado</span>
         <strong>{{ page.form.controls.noChange.value ? 'R$ 0,00' : (page.change() | currency:'BRL') }}</strong>
       </div>
-      <button mat-flat-button type="button">Confirmar dinheiro</button>
+      @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+      <button mat-flat-button type="button" (click)="page.save()" [disabled]="page.loading()">Confirmar dinheiro</button>
     </form>
 
     <aside class="cash-info">

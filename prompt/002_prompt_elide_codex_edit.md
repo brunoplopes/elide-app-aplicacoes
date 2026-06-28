@@ -21,4 +21,9 @@ Deve todas as funcionalidades:
 - Pagamento em dinheiro
 - Rastreamento em tempo real
 
+### Cliente
+Backend:
+- implemente todas as funcionalidades do Cliente no backend
 
+Frontend Cliente
+- Implemente as chamadas para api do Cliente no frontend

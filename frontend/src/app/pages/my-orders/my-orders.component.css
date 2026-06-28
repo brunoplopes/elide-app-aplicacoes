@@ -3,6 +3,7 @@
 .order-card { display: grid; gap: 1rem; border: 1px solid var(--elide-border); border-radius: 8px; background: var(--elide-card); padding: 1.2rem; box-shadow: var(--elide-shadow-card); }
 h2 { margin: 0; font-size: 1.1rem; font-weight: 900; }
 p { margin: .25rem 0 0; color: var(--elide-muted); }
+.api-message { margin-bottom: 1rem; color: var(--elide-orange); font-weight: 800; }
 .order-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
 .order-actions button:last-child { border-radius: 999px !important; background: var(--elide-orange) !important; color: white !important; }
 

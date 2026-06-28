@@ -14,6 +14,7 @@ export class AuthService {
   readonly profile = this.profileSignal.asReadonly();
   readonly isAuthenticated = computed(() => Boolean(this.profileSignal()?.accessToken));
   readonly isAdmin = computed(() => this.hasRole('ADMIN') || this.hasRole('MASTER_ADMIN'));
+  readonly isStoreUser = computed(() => this.hasRole('STORE_OWNER') || this.hasRole('STORE_USER') || this.isAdmin());
 
   login(username: string, password: string) {
     return this.api.login(username, password).pipe(tap((response) => this.persist(response)));
@@ -21,6 +22,14 @@ export class AuthService {
 
   register(payload: { username: string; email: string; password: string; fullName: string }) {
     return this.api.register(payload).pipe(tap((response) => this.persist(response)));
+  }
+
+  forgotPassword(identifier: string) {
+    return this.api.forgotPassword(identifier);
+  }
+
+  changePassword(payload: { currentPassword: string; newPassword: string; confirmPassword: string }) {
+    return this.api.changePassword(payload);
   }
 
   logout(): void {
@@ -51,4 +60,3 @@ function readProfile(): AuthResponse | null {
   const raw = localStorage.getItem(PROFILE_KEY);
   return raw ? JSON.parse(raw) as AuthResponse : null;
 }
-

@@ -15,7 +15,8 @@
       <div><span>Entrega</span><strong>R$ 6,90</strong></div>
       <div class="discount"><span>Cupom</span><strong>- R$ 10,00</strong></div>
       <footer><span>Total</span><strong>{{ page.cart.total() + 6.9 - 10 | currency:'BRL' }}</strong></footer>
-      <button mat-flat-button type="button">Finalizar pedido</button>
+      @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+      <button mat-flat-button type="button" (click)="page.finish()" [disabled]="page.loading()">Finalizar pedido</button>
     </article>
   </div>
 </section>

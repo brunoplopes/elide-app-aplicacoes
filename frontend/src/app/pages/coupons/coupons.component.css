@@ -1,3 +1,9 @@
 :host {
   display: block;
 }
+
+.api-message {
+  margin: 0 0 1rem;
+  color: var(--elide-orange);
+  font-weight: 800;
+}

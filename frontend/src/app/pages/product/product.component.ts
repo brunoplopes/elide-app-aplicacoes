@@ -30,4 +30,8 @@ export class ProductPageComponent {
     ),
     { initialValue: emptyProducts }
   );
+
+  add(product: Product): void {
+    this.cart.add({ ...product, storeId: this.route.snapshot.paramMap.get('id') ?? undefined });
+  }
 }

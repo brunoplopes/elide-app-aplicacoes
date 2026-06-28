@@ -27,7 +27,8 @@
         </mat-select>
       </mat-form-field>
       <label class="save-card"><input type="checkbox"> Salvar cartao para proximos pedidos</label>
-      <button mat-flat-button type="button">Salvar cartao</button>
+      @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+      <button mat-flat-button type="button" (click)="page.save()" [disabled]="page.loading()">Salvar cartao</button>
     </form>
 
     <aside class="card-preview">

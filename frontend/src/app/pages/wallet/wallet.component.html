@@ -3,13 +3,16 @@
   <div class="wallet-grid">
     <article class="balance-card">
       <span>Saldo disponivel</span>
-      <strong>{{ page.balance }}</strong>
+      <strong>{{ page.money(page.balance()) }}</strong>
       <p>Cashback e reembolsos podem ser usados no checkout.</p>
     </article>
     <article class="panel-card">
       <h2>Extrato</h2>
-      @for (entry of page.entries; track entry.title) {
-        <div class="entry"><mat-icon>{{ entry.icon }}</mat-icon><strong>{{ entry.title }}</strong><span>{{ entry.value }}</span></div>
+      @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+      @for (entry of page.entries(); track entry.id) {
+        <div class="entry"><mat-icon>{{ entry.icon }}</mat-icon><strong>{{ entry.title }}</strong><span>{{ page.money(entry.amount) }}</span></div>
+      } @empty {
+        <div class="entry"><mat-icon>account_balance_wallet</mat-icon><strong>Nenhum lancamento</strong><span>{{ page.money(0) }}</span></div>
       }
     </article>
   </div>

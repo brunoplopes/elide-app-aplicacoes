@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MATERIAL } from '../shared/page-kit';
+import { catchError, of } from 'rxjs';
+import { CustomerCoupon } from '../../models/marketplace.models';
+import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
-import { FeaturePageVm } from '../shared/page-kit';
+import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'coupons-page',
@@ -12,38 +14,34 @@ import { FeaturePageVm } from '../shared/page-kit';
   styleUrl: './coupons.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CouponsPageComponent {
-  readonly page = this;
+export class CouponsPageComponent implements OnInit {
+  private readonly api = inject(CustomerApiService);
 
-  readonly vm: FeaturePageVm = {
-  "eyebrow": "Promocoes",
-  "title": "Cupons de desconto",
-  "description": "Descontos prontos para aplicar no carrinho.",
-  "cards": [
-    {
-      "title": "ELIDE10",
-      "description": "10% OFF no primeiro pedido.",
-      "icon": "local_offer",
-      "action": "Usar no carrinho"
-    },
-    {
-      "title": "FRETEGRATIS",
-      "description": "Entrega gratis em lojas selecionadas.",
-      "icon": "moped",
-      "action": "Aplicar"
-    },
-    {
-      "title": "PIX15",
-      "description": "Desconto para pagamento via PIX.",
-      "icon": "qr_code_2",
-      "action": "Gerar PIX"
-    },
-    {
-      "title": "MERCADO20",
-      "description": "Oferta especial para mercados.",
-      "icon": "shopping_basket",
-      "action": "Ver ofertas"
-    }
-  ]
-};
+  readonly page = this;
+  readonly coupons = signal<CustomerCoupon[]>([]);
+  readonly message = signal<string | null>(null);
+
+  readonly vm = computed<FeaturePageVm>(() => ({
+    eyebrow: 'Promocoes',
+    title: 'Cupons de desconto',
+    description: 'Descontos prontos para aplicar no carrinho.',
+    cards: this.coupons().map((coupon) => ({
+      title: coupon.code,
+      description: coupon.description ?? `${this.money(coupon.discountValue)} de desconto.`,
+      icon: 'local_offer',
+      action: coupon.active ? 'Usar no carrinho' : 'Indisponivel',
+      meta: coupon.active ? 'Ativo' : 'Pausado'
+    }))
+  }));
+
+  ngOnInit(): void {
+    this.api.coupons().pipe(catchError(() => {
+      this.message.set('Endpoint /customer/coupons ainda nao respondeu.');
+      return of([]);
+    })).subscribe((coupons) => this.coupons.set(coupons));
+  }
+
+  money(value: number): string {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value ?? 0);
+  }
 }

@@ -1,19 +1,20 @@
 <section class="elide-section">
   <elide-client-heading title="Rastreamento em tempo real" description="Acompanhe preparo, rota, distancia e previsao de chegada do entregador." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
   <div class="tracking-grid">
     <div class="map-panel">
-      <span>Entregador a 1,8 km</span>
+      <span>Entregador a {{ page.distance() }}</span>
       <i class="origin"></i>
       <i class="destination"></i>
       <b></b>
     </div>
     <article class="panel-card">
-      <h2>Pedido ELD-1029</h2>
-      <p>Previsao: 12 minutos</p>
-      <mat-progress-bar mode="determinate" [value]="78" />
+      <h2>Pedido {{ page.tracking()?.orderId?.slice(0, 8)?.toUpperCase() ?? 'ELD-1029' }}</h2>
+      <p>Previsao: {{ page.tracking()?.etaMinutes ?? 12 }} minutos</p>
+      <mat-progress-bar mode="determinate" [value]="page.progress()" />
       <div class="steps">
-        @for (step of page.steps; track step; let index = $index) {
-          <div><mat-icon>{{ index < 3 ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon><strong>{{ step }}</strong></div>
+        @for (step of page.steps(); track step.label) {
+          <div><mat-icon>{{ step.done ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon><strong>{{ step.label }}</strong></div>
         }
       </div>
     </article>

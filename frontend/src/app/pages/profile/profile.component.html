@@ -7,7 +7,8 @@
       <mat-form-field appearance="outline"><mat-label>Nome completo</mat-label><input matInput formControlName="fullName"></mat-form-field>
       <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput formControlName="email"></mat-form-field>
       <mat-form-field appearance="outline"><mat-label>Telefone</mat-label><input matInput formControlName="phone"></mat-form-field>
-      <button mat-flat-button type="button">Salvar perfil</button>
+      @if (page.message()) { <p class="form-message">{{ page.message() }}</p> }
+      <button mat-flat-button type="button" (click)="page.save()" [disabled]="page.loading()">Salvar perfil</button>
     </form>
     <aside class="panel-card">
       <mat-icon>verified_user</mat-icon>

@@ -1,3 +1,26 @@
 :host {
   display: block;
 }
+
+.api-note {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  border: 1px solid rgba(255, 107, 0, .22);
+  border-radius: 8px;
+  background: rgba(255, 107, 0, .08);
+  padding: .85rem 1rem;
+  color: var(--elide-muted);
+  font-weight: 750;
+}
+
+.api-note mat-icon {
+  color: var(--elide-orange);
+}
+
+.api-note button {
+  margin-left: auto;
+  border-radius: 999px !important;
+  color: var(--elide-orange) !important;
+  font-weight: 850 !important;
+}

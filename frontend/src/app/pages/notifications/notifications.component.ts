@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MATERIAL } from '../shared/page-kit';
+import { catchError, of } from 'rxjs';
+import { CustomerNotification } from '../../models/marketplace.models';
+import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
-import { FeaturePageVm } from '../shared/page-kit';
+import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'notifications-page',
@@ -12,38 +14,40 @@ import { FeaturePageVm } from '../shared/page-kit';
   styleUrl: './notifications.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationsPageComponent {
-  readonly page = this;
+export class NotificationsPageComponent implements OnInit {
+  private readonly api = inject(CustomerApiService);
 
-  readonly vm: FeaturePageVm = {
-  "eyebrow": "Tempo real",
-  "title": "Notificacoes",
-  "description": "Receba atualizacoes de pedidos, cupons, reembolsos e entregas.",
-  "cards": [
-    {
-      "title": "Pedido saiu para entrega",
-      "description": "ELD-1029 esta a caminho.",
-      "icon": "notifications_active",
-      "meta": "Agora"
-    },
-    {
-      "title": "Cupom PIX15 disponivel",
-      "description": "Use hoje em pagamentos via PIX.",
-      "icon": "sell",
-      "meta": "Hoje"
-    },
-    {
-      "title": "Reembolso aprovado",
-      "description": "Credito adicionado a carteira.",
-      "icon": "account_balance_wallet",
-      "meta": "Ontem"
-    },
-    {
-      "title": "Favorito abriu agora",
-      "description": "Cantina ELIDE esta aceitando pedidos.",
-      "icon": "restaurant",
-      "meta": "Agora"
-    }
-  ]
-};
+  readonly page = this;
+  readonly notifications = signal<CustomerNotification[]>([]);
+  readonly message = signal<string | null>(null);
+
+  readonly vm = computed<FeaturePageVm>(() => ({
+    eyebrow: 'Tempo real',
+    title: 'Notificacoes',
+    description: 'Receba atualizacoes de pedidos, cupons, reembolsos e entregas.',
+    cards: this.notifications().map((notification) => ({
+      title: notification.title,
+      description: notification.message,
+      icon: notification.read ? 'notifications' : 'notifications_active',
+      meta: notification.read ? 'Lida' : 'Nova',
+      action: notification.read ? undefined : 'Marcar como lida',
+      path: notification.id
+    }))
+  }));
+
+  ngOnInit(): void {
+    this.api.notifications().pipe(catchError(() => {
+      this.message.set('Endpoint /customer/notifications ainda nao respondeu.');
+      return of([]);
+    })).subscribe((notifications) => this.notifications.set(notifications));
+  }
+
+  markRead(notificationId: string): void {
+    this.api.markNotificationRead(notificationId).pipe(catchError(() => of(null))).subscribe((updated) => {
+      if (!updated) {
+        return;
+      }
+      this.notifications.update((items) => items.map((item) => item.id === updated.id ? updated : item));
+    });
+  }
 }

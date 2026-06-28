@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MATERIAL } from '../shared/page-kit';
+import { catchError, of } from 'rxjs';
+import { CustomerAddress } from '../../models/marketplace.models';
+import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
-import { FeaturePageVm } from '../shared/page-kit';
+import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'addresses-page',
@@ -12,35 +14,32 @@ import { FeaturePageVm } from '../shared/page-kit';
   styleUrl: './addresses.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddressesPageComponent {
-  readonly page = this;
+export class AddressesPageComponent implements OnInit {
+  private readonly api = inject(CustomerApiService);
 
-  readonly vm: FeaturePageVm = {
-  "eyebrow": "Entrega",
-  "title": "Enderecos",
-  "description": "Salve locais de entrega e deixe o frete pronto para calculo rapido.",
-  "actionLabel": "Adicionar",
-  "actionLink": "/enderecos",
-  "actionIcon": "add_location",
-  "cards": [
-    {
-      "title": "Casa",
-      "description": "Rua das Acacias, 124 - entrega padrao.",
-      "icon": "home_pin",
-      "action": "Editar"
-    },
-    {
-      "title": "Trabalho",
-      "description": "Av. Brasil, 900 - portaria comercial.",
-      "icon": "business",
-      "action": "Editar"
-    },
-    {
-      "title": "Familia",
-      "description": "Rua Sete de Setembro, 44 - finais de semana.",
-      "icon": "location_on",
-      "action": "Editar"
-    }
-  ]
-};
+  readonly page = this;
+  readonly addresses = signal<CustomerAddress[]>([]);
+  readonly message = signal<string | null>(null);
+
+  readonly vm = computed<FeaturePageVm>(() => ({
+    eyebrow: 'Entrega',
+    title: 'Enderecos',
+    description: 'Salve locais de entrega e deixe o frete pronto para calculo rapido.',
+    actionLabel: 'Adicionar',
+    actionLink: '/enderecos',
+    actionIcon: 'add_location',
+    cards: this.addresses().map((address) => ({
+      title: address.label,
+      description: `${address.street}, ${address.number} - ${address.district}`,
+      icon: address.label.toLowerCase().includes('trabalho') ? 'business' : 'home_pin',
+      action: 'Editar'
+    }))
+  }));
+
+  ngOnInit(): void {
+    this.api.addresses().pipe(catchError(() => {
+      this.message.set('Endpoint /customer/addresses ainda nao respondeu.');
+      return of([]);
+    })).subscribe((addresses) => this.addresses.set(addresses));
+  }
 }
