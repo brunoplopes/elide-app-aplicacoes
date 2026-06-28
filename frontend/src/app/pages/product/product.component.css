@@ -1,0 +1,7 @@
+:host { display: block; }
+.product-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.product-card { display: grid; gap: .9rem; border: 1px solid var(--elide-border); border-radius: 8px; background: var(--elide-card); padding: 1rem; box-shadow: var(--elide-shadow-card); }
+h2, p { margin: 0; }
+p { min-height: 3rem; color: var(--elide-muted); }
+.product-card div { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+button { border-radius: 999px !important; background: var(--elide-orange) !important; color: white !important; }

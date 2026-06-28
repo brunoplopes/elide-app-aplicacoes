@@ -1,0 +1,14 @@
+<section class="elide-section">
+  <elide-client-heading title="Avaliacoes" description="Avalie pedidos, lojas e entregadores para melhorar a experiencia da cidade." />
+  <div class="review-grid">
+    @for (order of page.orders; track order.id) {
+      <article class="review-card">
+        <h2>{{ order.store }}</h2>
+        <p>{{ order.id }}</p>
+        <div class="stars">@for (star of page.stars; track star) { <mat-icon>star</mat-icon> }</div>
+        <mat-form-field appearance="outline"><mat-label>Comentario</mat-label><textarea matInput rows="3"></textarea></mat-form-field>
+        <button mat-flat-button type="button">Enviar avaliacao</button>
+      </article>
+    }
+  </div>
+</section>

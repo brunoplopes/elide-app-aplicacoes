@@ -1,0 +1,15 @@
+<section class="cart-page">
+  <elide-client-heading eyebrow="Pedido" title="Carrinho" description="Revise os itens antes de seguir para o checkout." />
+  <article class="cart-card">
+    @for (item of page.cart.items(); track item.product.id) {
+      <div class="cart-row">
+        <mat-icon>shopping_bag</mat-icon>
+        <div><strong>{{ item.product.name }}</strong><span>{{ item.quantity }} x {{ item.product.price | currency:'BRL' }}</span></div>
+        <button mat-icon-button type="button" (click)="page.cart.remove(item.product.id)" aria-label="Remover"><mat-icon>delete</mat-icon></button>
+      </div>
+    } @empty {
+      <div class="cart-row">Seu carrinho esta vazio.</div>
+    }
+    <footer><strong>Total {{ page.cart.total() | currency:'BRL' }}</strong><a mat-flat-button routerLink="/checkout">Checkout</a></footer>
+  </article>
+</section>

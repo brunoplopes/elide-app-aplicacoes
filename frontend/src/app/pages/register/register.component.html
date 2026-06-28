@@ -1,0 +1,24 @@
+<section class="register-page">
+  <div>
+    <span>Cadastro de cliente</span>
+    <h1>Crie sua conta ELIDE</h1>
+    <p>Pedidos, favoritos, carteira, enderecos e notificacoes organizados em uma experiencia simples.</p>
+    <div class="steps">
+      @for (step of ['Informe seus dados', 'Salve seus enderecos', 'Pague com PIX, cartao ou dinheiro']; track step; let index = $index) {
+        <article><strong>{{ index + 1 }}</strong><span>{{ step }}</span></article>
+      }
+    </div>
+  </div>
+  <form class="elide-form-card" [formGroup]="page.form" (ngSubmit)="page.submit()">
+    <h2>Dados de acesso</h2>
+    <p>Crie sua conta para continuar.</p>
+    <button class="elide-google-button" type="button">G&nbsp;&nbsp;Continuar com Google</button>
+    <div class="elide-form-divider">ou</div>
+    <mat-form-field appearance="outline"><mat-label>Nome completo</mat-label><input matInput formControlName="fullName"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Usuario</mat-label><input matInput formControlName="username"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput type="email" formControlName="email"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Senha</mat-label><input matInput type="password" formControlName="password"></mat-form-field>
+    <button mat-flat-button type="submit">Cadastrar</button>
+    <a mat-button routerLink="/login">Ja tenho conta</a>
+  </form>
+</section>

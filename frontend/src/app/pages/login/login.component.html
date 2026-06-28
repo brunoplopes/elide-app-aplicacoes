@@ -1,0 +1,26 @@
+<section class="auth-page">
+  <div class="auth-copy">
+    <span>Acesso seguro</span>
+    <h1>Entrar no ELIDE</h1>
+    <p>Continue seus pedidos, acompanhe entregas em tempo real e gerencie pagamentos, cupons e favoritos em uma unica conta.</p>
+    <div class="auth-benefits">
+      @for (item of ['PIX e cartao', 'Rastreamento ao vivo', 'Cupons personalizados']; track item) {
+        <article><mat-icon>verified</mat-icon><strong>{{ item }}</strong></article>
+      }
+    </div>
+  </div>
+  <form class="auth-card elide-form-card" [formGroup]="page.form" (ngSubmit)="page.submit()">
+    <h2>Bem-vindo de volta</h2>
+    <p>Entre para continuar.</p>
+    <button class="elide-google-button" type="button">G&nbsp;&nbsp;Continuar com Google</button>
+    <div class="elide-form-divider">ou</div>
+    <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput formControlName="username" placeholder="voce@email.com"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Senha</mat-label><input matInput type="password" formControlName="password"></mat-form-field>
+    @if (page.error()) { <span class="error">{{ page.error() }}</span> }
+    <button mat-flat-button type="submit">Entrar</button>
+    <div class="auth-links">
+      <a mat-button routerLink="/recuperar-senha">Esqueci minha senha</a>
+      <span>Nao tem conta? <a routerLink="/cadastro">Cadastre-se</a></span>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,21 @@
+<section class="elide-section">
+  <elide-client-heading title="Rastreamento em tempo real" description="Acompanhe preparo, rota, distancia e previsao de chegada do entregador." />
+  <div class="tracking-grid">
+    <div class="map-panel">
+      <span>Entregador a 1,8 km</span>
+      <i class="origin"></i>
+      <i class="destination"></i>
+      <b></b>
+    </div>
+    <article class="panel-card">
+      <h2>Pedido ELD-1029</h2>
+      <p>Previsao: 12 minutos</p>
+      <mat-progress-bar mode="determinate" [value]="78" />
+      <div class="steps">
+        @for (step of page.steps; track step; let index = $index) {
+          <div><mat-icon>{{ index < 3 ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon><strong>{{ step }}</strong></div>
+        }
+      </div>
+    </article>
+  </div>
+</section>

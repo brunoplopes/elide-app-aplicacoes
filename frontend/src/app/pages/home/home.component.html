@@ -1,0 +1,56 @@
+<section class="home-hero" [style.background-image]="'linear-gradient(to right, rgba(30, 30, 30, .88), rgba(30, 30, 30, .58), rgba(30, 30, 30, .18)), url(' + page.heroImage + ')'">
+  <div class="hero-content">
+    <span class="hero-badge"><mat-icon>bolt</mat-icon> Delivery para a sua cidade</span>
+    <h1>Seu pedido, <strong>na sua porta.</strong></h1>
+    <p>Restaurantes, lanchonetes, pizzarias, mercados e farmacias da sua regiao, com entrega rapida e segura.</p>
+    <label class="hero-search">
+      <mat-icon>search</mat-icon>
+      <input placeholder="Buscar lojas, pratos ou produtos..." />
+      <a mat-flat-button routerLink="/restaurantes">Buscar</a>
+    </label>
+  </div>
+</section>
+
+<section class="elide-section">
+  <h2>O que voce precisa hoje?</h2>
+  <div class="category-grid">
+    @for (category of page.categories; track category.title) {
+      <a class="category-card" [routerLink]="category.path">
+        <mat-icon>{{ category.icon }}</mat-icon>
+        <strong>{{ category.title }}</strong>
+      </a>
+    }
+  </div>
+</section>
+
+<section class="elide-section split-section">
+  <div>
+    <h2>Cupons de desconto</h2>
+    <div class="coupon-list">
+      @for (coupon of page.coupons; track coupon.title) {
+        <article class="coupon-card">
+          <div>
+            <strong>{{ coupon.description }}</strong>
+            <span>{{ coupon.title }}</span>
+          </div>
+          <button type="button">COPIAR</button>
+        </article>
+      }
+    </div>
+  </div>
+  <div>
+    <h2>Lojas em destaque</h2>
+    <div class="store-list">
+      @for (store of page.stores; track store.name) {
+        <article class="store-row">
+          <div class="store-thumb"></div>
+          <div>
+            <strong>{{ store.name }}</strong>
+            <span>{{ store.segment }} · {{ store.eta }} · {{ store.fee }}</span>
+          </div>
+          <small><mat-icon>star</mat-icon>{{ store.rating }}</small>
+        </article>
+      }
+    </div>
+  </div>
+</section>

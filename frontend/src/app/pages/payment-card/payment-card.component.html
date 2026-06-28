@@ -1,0 +1,40 @@
+<section class="elide-section">
+  <elide-client-heading
+    eyebrow="Pagamento via cartao"
+    title="Cartao de credito ou debito"
+    description="Cadastre um cartao tokenizado, escolha parcelas e use no checkout com seguranca."
+    actionLabel="Voltar"
+    actionIcon="arrow_back"
+    actionLink="/pagamentos"
+  />
+
+  <div class="card-grid">
+    <form class="card-form elide-form-card" [formGroup]="page.form">
+      <h2>Novo cartao</h2>
+      <p>Dados protegidos por tokenizacao.</p>
+      <mat-form-field appearance="outline"><mat-label>Numero do cartao</mat-label><input matInput formControlName="cardNumber" placeholder="0000 0000 0000 0000"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Nome impresso</mat-label><input matInput formControlName="holderName"></mat-form-field>
+      <div class="form-row">
+        <mat-form-field appearance="outline"><mat-label>Validade</mat-label><input matInput formControlName="expiry" placeholder="MM/AA"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>CVV</mat-label><input matInput type="password" formControlName="cvv"></mat-form-field>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Parcelamento</mat-label>
+        <mat-select formControlName="installments">
+          <mat-option value="1x de R$ 48,80">1x de R$ 48,80</mat-option>
+          <mat-option value="2x de R$ 24,40">2x de R$ 24,40</mat-option>
+          <mat-option value="3x de R$ 16,27">3x de R$ 16,27</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <label class="save-card"><input type="checkbox"> Salvar cartao para proximos pedidos</label>
+      <button mat-flat-button type="button">Salvar cartao</button>
+    </form>
+
+    <aside class="card-preview">
+      <span>ELIDE CARD</span>
+      <strong>**** **** **** 2026</strong>
+      <small>Cliente ELIDE · credito/debito</small>
+      <p>Tokenizacao preparada para gateway e antifraude.</p>
+    </aside>
+  </div>
+</section>

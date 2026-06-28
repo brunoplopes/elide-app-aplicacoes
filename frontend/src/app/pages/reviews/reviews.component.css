@@ -1,0 +1,7 @@
+:host { display: block; }
+.review-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.review-card { display: grid; gap: .85rem; border: 1px solid var(--elide-border); border-radius: 8px; background: var(--elide-card); padding: 1rem; box-shadow: var(--elide-shadow-card); }
+h2, p { margin: 0; }
+p { color: var(--elide-muted); }
+.stars { color: var(--elide-orange); }
+button { border-radius: 999px !important; background: var(--elide-gradient) !important; color: white !important; }

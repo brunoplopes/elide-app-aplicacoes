@@ -1,0 +1,40 @@
+<section class="elide-section">
+  <elide-client-heading
+    eyebrow="Pagamento via PIX"
+    title="PIX instantaneo"
+    description="Gere o QR Code, copie o codigo PIX e acompanhe a confirmacao do pagamento em tempo real."
+    actionLabel="Voltar"
+    actionIcon="arrow_back"
+    actionLink="/pagamentos"
+  />
+
+  <div class="payment-grid">
+    <article class="qr-card">
+      <div class="qr-code">
+        @for (row of [1,2,3,4,5,6,7,8,9]; track row) {
+          <span></span>
+        }
+      </div>
+      <strong>QR Code PIX</strong>
+      <p>Escaneie com o aplicativo do seu banco.</p>
+    </article>
+
+    <article class="payment-panel elide-form-card">
+      <h2>Codigo PIX</h2>
+      <p>Use o QR Code ou copie o codigo abaixo.</p>
+      <div class="summary-list">
+        @for (item of page.summary; track item.label) {
+          <div><span>{{ item.label }}</span><strong>{{ item.value }}</strong></div>
+        }
+      </div>
+      <label>
+        Codigo copia e cola
+        <textarea readonly rows="5">{{ page.pixCode }}</textarea>
+      </label>
+      <div class="button-row">
+        <button mat-flat-button type="button">Copiar codigo</button>
+        <a mat-button routerLink="/rastreamento">Acompanhar pedido</a>
+      </div>
+    </article>
+  </div>
+</section>

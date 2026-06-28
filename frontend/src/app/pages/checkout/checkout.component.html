@@ -1,0 +1,21 @@
+<section class="elide-section">
+  <elide-client-heading eyebrow="Pagamento seguro" title="Checkout" description="Revise endereco, cupom, entrega e escolha PIX, cartao ou dinheiro." />
+  <div class="checkout-grid">
+    <article class="panel-card form-panel elide-form-card">
+      <h2>Entrega e pagamento</h2>
+      <p>Confirme os dados antes de finalizar.</p>
+      <mat-form-field appearance="outline"><mat-label>Endereco de entrega</mat-label><mat-select value="home"><mat-option value="home">Casa - Rua das Acacias, 124</mat-option><mat-option value="work">Trabalho - Av. Brasil, 900</mat-option></mat-select></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Cupom</mat-label><input matInput value="ELIDE10"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Forma de pagamento</mat-label><mat-select value="PIX"><mat-option value="PIX">PIX instantaneo</mat-option><mat-option value="CARD">Cartao de credito/debito</mat-option><mat-option value="CASH">Dinheiro na entrega</mat-option></mat-select></mat-form-field>
+      <div class="pix-box"><mat-icon>qr_code_2</mat-icon><div><strong>PIX pronto para gateway</strong><span>QR Code e copia e cola serao gerados apos confirmar.</span></div></div>
+    </article>
+    <article class="panel-card summary">
+      <h2>Resumo</h2>
+      <div><span>Itens</span><strong>{{ page.cart.total() | currency:'BRL' }}</strong></div>
+      <div><span>Entrega</span><strong>R$ 6,90</strong></div>
+      <div class="discount"><span>Cupom</span><strong>- R$ 10,00</strong></div>
+      <footer><span>Total</span><strong>{{ page.cart.total() + 6.9 - 10 | currency:'BRL' }}</strong></footer>
+      <button mat-flat-button type="button">Finalizar pedido</button>
+    </article>
+  </div>
+</section>

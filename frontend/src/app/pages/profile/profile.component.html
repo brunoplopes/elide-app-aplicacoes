@@ -1,0 +1,18 @@
+<section class="elide-section">
+  <elide-client-heading title="Editar perfil" description="Mantenha seus dados atualizados para agilizar pagamentos, suporte e entregas." actionLabel="Alterar senha" actionIcon="lock_reset" actionLink="/alterar-senha" />
+  <div class="profile-grid">
+    <form [formGroup]="page.form" class="panel-card elide-form-card">
+      <h2>Dados pessoais</h2>
+      <p>Essas informacoes aparecem no atendimento e nas entregas.</p>
+      <mat-form-field appearance="outline"><mat-label>Nome completo</mat-label><input matInput formControlName="fullName"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput formControlName="email"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Telefone</mat-label><input matInput formControlName="phone"></mat-form-field>
+      <button mat-flat-button type="button">Salvar perfil</button>
+    </form>
+    <aside class="panel-card">
+      <mat-icon>verified_user</mat-icon>
+      <h2>Conta protegida</h2>
+      <p>Senha criptografada, sessoes autenticadas e notificacoes de seguranca preparadas.</p>
+    </aside>
+  </div>
+</section>

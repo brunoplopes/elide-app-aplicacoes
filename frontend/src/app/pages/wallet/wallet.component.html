@@ -1,0 +1,16 @@
+<section class="elide-section">
+  <elide-client-heading title="Carteira" description="Gerencie saldo, reembolsos, cashback e formas de pagamento." actionLabel="Pagamentos" actionIcon="payments" actionLink="/pagamentos" />
+  <div class="wallet-grid">
+    <article class="balance-card">
+      <span>Saldo disponivel</span>
+      <strong>{{ page.balance }}</strong>
+      <p>Cashback e reembolsos podem ser usados no checkout.</p>
+    </article>
+    <article class="panel-card">
+      <h2>Extrato</h2>
+      @for (entry of page.entries; track entry.title) {
+        <div class="entry"><mat-icon>{{ entry.icon }}</mat-icon><strong>{{ entry.title }}</strong><span>{{ entry.value }}</span></div>
+      }
+    </article>
+  </div>
+</section>

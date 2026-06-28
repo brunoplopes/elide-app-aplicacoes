@@ -1,0 +1,19 @@
+<section class="elide-section">
+  <elide-client-heading title="Historico de pedidos" description="Acompanhe pedidos recentes, status, reembolso e recompra." actionLabel="Rastrear atual" actionIcon="near_me" actionLink="/rastreamento" />
+  <div class="order-list">
+    @for (order of page.orders; track order.id) {
+      <article class="order-card">
+        <div>
+          <h2>{{ order.id }} · {{ order.store }}</h2>
+          <p>{{ order.status }} · {{ order.total }}</p>
+        </div>
+        <div class="order-actions">
+          <button mat-button type="button">Recomprar</button>
+          <button mat-button type="button">Reembolso</button>
+          <button mat-flat-button type="button">Avaliar</button>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="order.progress" />
+      </article>
+    }
+  </div>
+</section>

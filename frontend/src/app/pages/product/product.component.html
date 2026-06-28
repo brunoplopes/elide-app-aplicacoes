@@ -1,0 +1,14 @@
+<section class="elide-section">
+  <elide-client-heading eyebrow="Cardapio" title="Produtos" description="Escolha seus itens e adicione ao carrinho." />
+  <div class="product-grid">
+    @for (product of page.products().content; track product.id) {
+      <article class="product-card">
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <div><strong>{{ product.price | currency:'BRL' }}</strong><button mat-flat-button type="button" (click)="page.cart.add(product)">Adicionar</button></div>
+      </article>
+    } @empty {
+      <article class="product-card">Selecione uma loja para ver produtos.</article>
+    }
+  </div>
+</section>

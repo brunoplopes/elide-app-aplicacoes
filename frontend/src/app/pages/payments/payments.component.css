@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.feature-action {
+  justify-self: start;
+  border-radius: 999px;
+  background: rgba(255, 107, 0, .1);
+  color: var(--elide-orange) !important;
+  font-weight: 900;
+  padding: .45rem .75rem;
+}

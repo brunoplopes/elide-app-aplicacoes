@@ -1,0 +1,14 @@
+<section class="elide-section">
+  <elide-client-heading eyebrow="Administracao" title="Painel Administrativo" description="Gestao operacional, financeira, auditoria e aprovacoes." />
+  <div class="metric-grid">
+    @for (metric of page.metrics(); track metric.label) {
+      <elide-metric-card [label]="metric.label" [value]="metric.value" [icon]="metric.icon" />
+    }
+  </div>
+  <mat-tab-group class="admin-tabs">
+    <mat-tab label="Pedidos"><div class="tab-panel">@for (item of page.dashboard().ordersByStatus; track item.label) { <mat-chip>{{ item.label }}: {{ item.value }}</mat-chip> }</div></mat-tab>
+    <mat-tab label="Aprovacoes"><div class="tab-panel">Lojas e entregadores pendentes aparecem aqui.</div></mat-tab>
+    <mat-tab label="Financeiro"><div class="tab-panel">Receita: {{ page.dashboard().revenue | currency:'BRL' }}</div></mat-tab>
+    <mat-tab label="Auditoria"><div class="tab-panel">Logs e trilhas de auditoria preparados.</div></mat-tab>
+  </mat-tab-group>
+</section>
