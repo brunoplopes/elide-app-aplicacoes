@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "addresses")
 public class AddressEntity extends BaseEntity {
+    @Column(nullable = false, length = 80)
+    private String label = "Endereco";
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -38,4 +41,3 @@ public class AddressEntity extends BaseEntity {
     private BigDecimal latitude;
     private BigDecimal longitude;
 }
-

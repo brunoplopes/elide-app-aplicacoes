@@ -58,9 +58,22 @@ export class FavoritesPageComponent implements OnInit {
       title: store.name,
       description: `${store.segment} · ${store.open ? 'Aberto agora' : 'Fechado'} · ${this.money(store.deliveryFee)}`,
       icon: 'favorite_border',
-      action: 'Ver loja',
+      action: 'Favoritar',
       path: store.id
     }));
+  }
+
+  add(storeId: string): void {
+    if (!storeId) {
+      return;
+    }
+    this.api.addFavorite(storeId).subscribe({
+      next: (favorite) => {
+        this.favorites.update((favorites) => [favorite, ...favorites.filter((item) => item.storeId !== favorite.storeId)]);
+        this.message.set('Loja adicionada aos favoritos.');
+      },
+      error: () => this.message.set('Nao foi possivel adicionar favorito na API.')
+    });
   }
 
   money(value: number): string {

@@ -21,6 +21,16 @@ public final class AuthDtos {
     ) {
     }
 
+    public record ForgotPasswordRequest(@NotBlank String identifier) {
+    }
+
+    public record ChangePasswordRequest(
+        @NotBlank String currentPassword,
+        @NotBlank @Size(min = 8) String newPassword,
+        @NotBlank String confirmPassword
+    ) {
+    }
+
     public record AuthResponse(
         String accessToken,
         String refreshToken,
@@ -31,4 +41,3 @@ public final class AuthDtos {
     ) {
     }
 }
-

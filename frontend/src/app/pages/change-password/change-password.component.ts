@@ -3,6 +3,7 @@ import { MATERIAL } from '../shared/page-kit';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'elide-change-password-page',
@@ -16,6 +17,7 @@ export class ChangePasswordPageComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   readonly message = signal<string | null>(null);
   readonly form = this.fb.nonNullable.group({
     currentPassword: ['', Validators.required],
@@ -34,7 +36,10 @@ export class ChangePasswordPageComponent {
       return;
     }
     this.auth.changePassword(value).subscribe({
-      next: () => this.message.set('Senha atualizada com sucesso.'),
+      next: () => {
+        this.message.set('Senha atualizada com sucesso.');
+        void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/cliente');
+      },
       error: () => this.message.set('Endpoint /auth/change-password ainda nao respondeu.')
     });
   }

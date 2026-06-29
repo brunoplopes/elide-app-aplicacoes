@@ -2,6 +2,7 @@ package br.com.elide.infrastructure.config;
 
 import br.com.elide.infrastructure.security.ElideUserDetailsService;
 import br.com.elide.infrastructure.security.JwtAuthenticationFilter;
+import br.com.elide.infrastructure.security.MustChangePasswordFilter;
 import br.com.elide.infrastructure.security.RateLimitFilter;
 import br.com.elide.infrastructure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,6 +31,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
         HttpSecurity http,
         JwtAuthenticationFilter jwtAuthenticationFilter,
+        MustChangePasswordFilter mustChangePasswordFilter,
         RateLimitFilter rateLimitFilter
     ) throws Exception {
         return http
@@ -40,15 +42,19 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/catalog/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/change-password").authenticated()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "MASTER_ADMIN")
+                .requestMatchers("/api/v1/customer/**").hasAnyRole("CUSTOMER", "ADMIN", "MASTER_ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/store/signup").authenticated()
                 .requestMatchers("/api/v1/store/**").hasAnyRole("STORE_OWNER", "STORE_USER", "ADMIN", "MASTER_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/courier/signup").authenticated()
                 .requestMatchers("/api/v1/courier/**").hasAnyRole("COURIER", "ADMIN", "MASTER_ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(mustChangePasswordFilter, JwtAuthenticationFilter.class)
             .build();
     }
 

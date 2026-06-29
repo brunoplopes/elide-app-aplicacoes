@@ -2,6 +2,8 @@ package br.com.elide.interfaces.rest;
 
 import br.com.elide.application.AuthService;
 import br.com.elide.application.dto.AuthDtos.AuthResponse;
+import br.com.elide.application.dto.AuthDtos.ChangePasswordRequest;
+import br.com.elide.application.dto.AuthDtos.ForgotPasswordRequest;
 import br.com.elide.application.dto.AuthDtos.LoginRequest;
 import br.com.elide.application.dto.AuthDtos.RegisterRequest;
 import jakarta.validation.Valid;
@@ -31,5 +33,16 @@ public class AuthController {
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.registerCustomer(request);
     }
-}
 
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
+    }
+
+    @PostMapping("/change-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request);
+    }
+}

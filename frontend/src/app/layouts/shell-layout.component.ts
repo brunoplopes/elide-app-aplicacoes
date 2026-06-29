@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../services/auth.service';
@@ -8,6 +8,20 @@ import { ThemeService } from '../services/theme.service';
 type FooterGroup = {
   title: string;
   links: ReadonlyArray<{ label: string; route: string }>;
+};
+
+type MenuRole = 'auth' | 'guest' | 'customer' | 'store' | 'courier' | 'admin';
+
+type MenuLink = {
+  label: string;
+  route: string;
+  icon: string;
+  roles: ReadonlyArray<MenuRole>;
+};
+
+type MenuGroup = {
+  title: string;
+  links: ReadonlyArray<MenuLink>;
 };
 
 @Component({
@@ -38,10 +52,13 @@ type FooterGroup = {
           <a mat-button routerLink="/entregador" class="partner-pill">Entregador</a>
 
           @if (auth.isAuthenticated()) {
-            <a mat-stroked-button routerLink="/perfil" class="login-pill"><mat-icon>person</mat-icon> Perfil</a>
+            <a mat-stroked-button routerLink="/perfil" class="login-pill user-pill"><mat-icon>person</mat-icon> {{ userName() }}</a>
             @if (auth.isAdmin()) {
               <a mat-icon-button routerLink="/admin" aria-label="Painel admin" class="ghost-icon"><mat-icon>admin_panel_settings</mat-icon></a>
             }
+            <button mat-icon-button type="button" aria-label="Sair" class="ghost-icon logout-button" (click)="logout()">
+              <mat-icon>logout</mat-icon>
+            </button>
           } @else {
             <a mat-stroked-button routerLink="/login" class="login-pill"><mat-icon>person</mat-icon> Entrar</a>
           }
@@ -86,19 +103,34 @@ type FooterGroup = {
       </div>
 
       <nav class="mobile-menu-section" aria-label="Navegacao mobile">
-        <a routerLink="/restaurantes" (click)="closeMobileMenu()"><mat-icon>restaurant</mat-icon><span>Restaurantes</span></a>
-        <a routerLink="/mercados" (click)="closeMobileMenu()"><mat-icon>local_grocery_store</mat-icon><span>Mercado</span></a>
-        <a routerLink="/farmacias" (click)="closeMobileMenu()"><mat-icon>local_pharmacy</mat-icon><span>Farmacia</span></a>
-        <a routerLink="/meus-pedidos" (click)="closeMobileMenu()"><mat-icon>receipt_long</mat-icon><span>Meus Pedidos</span></a>
-        <a routerLink="/contato" (click)="closeMobileMenu()"><mat-icon>support_agent</mat-icon><span>Contato</span></a>
-        <a routerLink="/login" (click)="closeMobileMenu()"><mat-icon>person</mat-icon><span>Entrar / Cadastrar</span></a>
-      </nav>
+        @if (auth.isAuthenticated()) {
+          <div class="drawer-user">
+            <mat-icon>account_circle</mat-icon>
+            <span>
+              <strong>{{ userName() }}</strong>
+              <small>{{ userRoleLabel() }}</small>
+            </span>
+          </div>
+        }
 
-      <nav class="mobile-menu-section panel-section" aria-label="Paineis">
-        <h2>PAINEIS</h2>
-        <a routerLink="/loja" (click)="closeMobileMenu()"><mat-icon>storefront</mat-icon><span>Area da Loja</span></a>
-        <a routerLink="/entregador" (click)="closeMobileMenu()"><mat-icon>delivery_dining</mat-icon><span>Area do Entregador</span></a>
-        <a routerLink="/admin" (click)="closeMobileMenu()"><mat-icon>admin_panel_settings</mat-icon><span>Painel Admin</span></a>
+        @for (group of visibleMenuGroups(); track group.title) {
+          <div class="menu-group">
+            <h2>{{ group.title }}</h2>
+            @for (link of group.links; track link.route + link.label) {
+              <a [routerLink]="link.route" (click)="closeMobileMenu()">
+                <mat-icon>{{ link.icon }}</mat-icon>
+                <span>{{ link.label }}</span>
+              </a>
+            }
+          </div>
+        }
+
+        @if (auth.isAuthenticated()) {
+          <button type="button" class="drawer-logout" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Sair da conta</span>
+          </button>
+        }
       </nav>
     </aside>
 
@@ -264,6 +296,16 @@ type FooterGroup = {
       font-size: 17px;
     }
 
+    .user-pill {
+      max-width: 178px;
+    }
+
+    .user-pill ::ng-deep .mdc-button__label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .cart-button {
       width: 40px;
       height: 40px;
@@ -277,7 +319,7 @@ type FooterGroup = {
     }
 
     .menu-button {
-      display: none;
+      display: inline-grid;
       color: var(--elide-ink) !important;
     }
 
@@ -375,24 +417,51 @@ type FooterGroup = {
 
     .mobile-menu-section {
       display: grid;
-      gap: .15rem;
+      gap: .85rem;
     }
 
-    .mobile-menu-section a {
+    .menu-group {
+      display: grid;
+      gap: .15rem;
+      border-top: 1px solid rgba(30, 30, 30, .1);
+      padding-top: .8rem;
+    }
+
+    .menu-group:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .menu-group h2 {
+      margin: 0 0 .25rem;
+      padding: 0 .6rem;
+      color: #7c7c7c;
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .mobile-menu-section a,
+    .drawer-logout {
       display: flex;
       align-items: center;
       min-height: 36px;
       gap: .65rem;
+      border: 0;
       border-radius: 8px;
       padding: 0 .6rem;
+      background: transparent;
       color: #161616;
       font-size: .88rem;
       font-weight: 500;
       line-height: 1.2;
       text-decoration: none;
+      text-align: left;
     }
 
-    .mobile-menu-section mat-icon {
+    .mobile-menu-section mat-icon,
+    .drawer-logout mat-icon {
       flex: 0 0 19px;
       width: 19px;
       height: 19px;
@@ -401,41 +470,61 @@ type FooterGroup = {
       line-height: 19px;
     }
 
-    .mobile-menu-section span {
+    .mobile-menu-section span,
+    .drawer-logout span {
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .mobile-menu-section a:hover {
+    .mobile-menu-section a:hover,
+    .drawer-logout:hover {
       background: rgba(255, 107, 0, .08);
       color: var(--elide-orange);
     }
 
-    .panel-section {
-      margin-top: 1rem;
-      border-top: 1px solid rgba(30, 30, 30, .1);
-      padding-top: .95rem;
+    .drawer-user {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      border: 1px solid rgba(255, 107, 0, .16);
+      border-radius: 14px;
+      background: rgba(255, 107, 0, .06);
+      padding: .7rem .75rem;
     }
 
-    .panel-section h2 {
-      margin: 0 0 .3rem;
-      padding: 0 .6rem;
-      color: #7c7c7c;
+    .drawer-user > mat-icon {
+      color: var(--elide-orange);
+    }
+
+    .drawer-user strong,
+    .drawer-user small {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .drawer-user strong {
+      color: var(--elide-ink);
+      font-size: .9rem;
+      font-weight: 950;
+    }
+
+    .drawer-user small {
+      color: var(--elide-muted);
       font-size: .72rem;
-      font-weight: 850;
-      letter-spacing: .04em;
+      font-weight: 750;
     }
 
-    .panel-section a {
-      color: #747474;
-      font-size: .8rem;
-    }
-
-    .panel-section mat-icon {
-      color: #747474;
-      font-size: 18px;
+    .drawer-logout {
+      width: 100%;
+      min-height: 40px;
+      margin-top: .25rem;
+      color: var(--elide-orange);
+      cursor: pointer;
     }
 
     .site-footer {
@@ -546,13 +635,21 @@ type FooterGroup = {
       color: white;
     }
 
-    :host-context(.dark) .panel-section {
+    :host-context(.dark) .menu-group {
       border-top-color: rgba(255, 255, 255, .12);
     }
 
-    :host-context(.dark) .panel-section a,
-    :host-context(.dark) .panel-section h2 {
+    :host-context(.dark) .menu-group h2 {
       color: rgba(255, 255, 255, .65);
+    }
+
+    :host-context(.dark) .drawer-user {
+      border-color: rgba(255, 255, 255, .12);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    :host-context(.dark) .drawer-user strong {
+      color: white;
     }
 
     :host-context(.dark) .brand-link,
@@ -588,10 +685,6 @@ type FooterGroup = {
 
       .main-nav {
         display: none;
-      }
-
-      .menu-button {
-        display: inline-grid;
       }
 
       .header-actions {
@@ -667,7 +760,32 @@ type FooterGroup = {
 export class ShellLayoutComponent {
   readonly auth = inject(AuthService);
   readonly theme = inject(ThemeService);
+  private readonly router = inject(Router);
   readonly mobileMenuOpen = signal(false);
+
+  readonly userName = computed(() => this.auth.profile()?.fullName || this.auth.profile()?.username || 'Minha conta');
+  readonly userRoleLabel = computed(() => {
+    if (this.auth.hasRole('MASTER_ADMIN')) {
+      return 'Administrador master';
+    }
+    if (this.auth.hasRole('ADMIN')) {
+      return 'Administrador';
+    }
+    if (this.auth.hasRole('STORE_OWNER') || this.auth.hasRole('STORE_USER')) {
+      return 'Estabelecimento';
+    }
+    if (this.auth.hasRole('COURIER')) {
+      return 'Entregador';
+    }
+    return this.auth.isAuthenticated() ? 'Cliente' : 'Visitante';
+  });
+
+  readonly visibleMenuGroups = computed(() => this.menuGroups
+    .map((group) => ({
+      ...group,
+      links: group.links.filter((link) => this.canSee(link.roles))
+    }))
+    .filter((group) => group.links.length > 0));
 
   readonly mainLinks = [
     { label: 'Restaurantes', route: '/restaurantes' },
@@ -708,11 +826,141 @@ export class ShellLayoutComponent {
     }
   ];
 
+  readonly menuGroups: ReadonlyArray<MenuGroup> = [
+    {
+      title: 'Comprar',
+      links: [
+        { label: 'Restaurantes', route: '/restaurantes', icon: 'restaurant', roles: ['guest', 'auth'] },
+        { label: 'Mercados', route: '/mercados', icon: 'local_grocery_store', roles: ['guest', 'auth'] },
+        { label: 'Farmacias', route: '/farmacias', icon: 'local_pharmacy', roles: ['guest', 'auth'] },
+        { label: 'Carrinho', route: '/carrinho', icon: 'shopping_bag', roles: ['guest', 'auth'] },
+        { label: 'Contato', route: '/contato', icon: 'support_agent', roles: ['guest', 'auth'] }
+      ]
+    },
+    {
+      title: 'Cliente',
+      links: [
+        { label: 'Cadastro', route: '/cadastro', icon: 'person_add', roles: ['guest'] },
+        { label: 'Login', route: '/login', icon: 'login', roles: ['guest'] },
+        { label: 'Esqueci minha senha', route: '/recuperar-senha', icon: 'lock_reset', roles: ['guest'] },
+        { label: 'Area do cliente', route: '/cliente', icon: 'dashboard', roles: ['customer'] },
+        { label: 'Editar perfil', route: '/perfil', icon: 'person', roles: ['customer'] },
+        { label: 'Alterar senha', route: '/alterar-senha', icon: 'lock_reset', roles: ['customer'] },
+        { label: 'Favoritos', route: '/favoritos', icon: 'favorite', roles: ['customer'] },
+        { label: 'Enderecos', route: '/enderecos', icon: 'location_on', roles: ['customer'] },
+        { label: 'Historico de pedidos', route: '/meus-pedidos', icon: 'receipt_long', roles: ['customer'] },
+        { label: 'Cupons', route: '/cupons', icon: 'sell', roles: ['customer'] },
+        { label: 'Carteira', route: '/carteira', icon: 'account_balance_wallet', roles: ['customer'] },
+        { label: 'Avaliacoes', route: '/avaliacoes', icon: 'star', roles: ['customer'] },
+        { label: 'Notificacoes', route: '/notificacoes', icon: 'notifications', roles: ['customer'] },
+        { label: 'Pagamentos', route: '/pagamentos', icon: 'payments', roles: ['customer'] },
+        { label: 'Pagamento via PIX', route: '/pagamentos/pix', icon: 'qr_code_2', roles: ['customer'] },
+        { label: 'Pagamento via cartao', route: '/pagamentos/cartao', icon: 'credit_card', roles: ['customer'] },
+        { label: 'Pagamento em dinheiro', route: '/pagamentos/dinheiro', icon: 'payments', roles: ['customer'] },
+        { label: 'Rastreamento em tempo real', route: '/rastreamento', icon: 'near_me', roles: ['customer'] }
+      ]
+    },
+    {
+      title: 'Estabelecimento',
+      links: [
+        { label: 'Area da loja', route: '/loja', icon: 'storefront', roles: ['store'] },
+        { label: 'Cadastro da loja', route: '/loja', icon: 'add_business', roles: ['store'] },
+        { label: 'Envio de documentacao', route: '/loja', icon: 'upload_file', roles: ['store'] },
+        { label: 'Aprovacao pelo administrador', route: '/loja', icon: 'verified', roles: ['store'] },
+        { label: 'Produtos', route: '/loja', icon: 'inventory_2', roles: ['store'] },
+        { label: 'Categorias', route: '/loja', icon: 'category', roles: ['store'] },
+        { label: 'Complementos', route: '/loja', icon: 'add_circle', roles: ['store'] },
+        { label: 'Horarios', route: '/loja', icon: 'schedule', roles: ['store'] },
+        { label: 'Estoque', route: '/loja', icon: 'inventory', roles: ['store'] },
+        { label: 'Promocoes', route: '/loja', icon: 'local_offer', roles: ['store'] },
+        { label: 'Recebimento de pedidos', route: '/loja', icon: 'receipt_long', roles: ['store'] },
+        { label: 'Status do pedido', route: '/loja', icon: 'published_with_changes', roles: ['store'] },
+        { label: 'Financeiro', route: '/loja', icon: 'payments', roles: ['store'] },
+        { label: 'Relatorios', route: '/loja', icon: 'bar_chart', roles: ['store'] },
+        { label: 'Dashboard', route: '/loja', icon: 'dashboard', roles: ['store'] },
+        { label: 'Avaliacoes', route: '/loja', icon: 'reviews', roles: ['store'] }
+      ]
+    },
+    {
+      title: 'Entregador',
+      links: [
+        { label: 'Area do entregador', route: '/entregador', icon: 'delivery_dining', roles: ['courier'] },
+        { label: 'Cadastro', route: '/entregador', icon: 'person_add', roles: ['courier'] },
+        { label: 'Envio de documentos', route: '/entregador', icon: 'upload_file', roles: ['courier'] },
+        { label: 'Validacao pelo administrador', route: '/entregador', icon: 'verified', roles: ['courier'] },
+        { label: 'Aceitar corrida', route: '/entregador', icon: 'check_circle', roles: ['courier'] },
+        { label: 'Recusar corrida', route: '/entregador', icon: 'cancel', roles: ['courier'] },
+        { label: 'GPS', route: '/entregador', icon: 'my_location', roles: ['courier'] },
+        { label: 'Mapa', route: '/entregador', icon: 'map', roles: ['courier'] },
+        { label: 'Ganhos diarios', route: '/entregador', icon: 'today', roles: ['courier'] },
+        { label: 'Ganhos mensais', route: '/entregador', icon: 'calendar_month', roles: ['courier'] },
+        { label: 'Extrato', route: '/entregador', icon: 'account_balance_wallet', roles: ['courier'] },
+        { label: 'Historico de entregas', route: '/entregador', icon: 'history', roles: ['courier'] },
+        { label: 'Disponivel / indisponivel', route: '/entregador', icon: 'toggle_on', roles: ['courier'] }
+      ]
+    },
+    {
+      title: 'Administrador',
+      links: [
+        { label: 'Painel administrativo', route: '/admin', icon: 'admin_panel_settings', roles: ['admin'] },
+        { label: 'CRUD de lojas', route: '/admin', icon: 'storefront', roles: ['admin'] },
+        { label: 'CRUD de categorias', route: '/admin', icon: 'category', roles: ['admin'] },
+        { label: 'CRUD de banners', route: '/admin', icon: 'image', roles: ['admin'] },
+        { label: 'CRUD de cidades', route: '/admin', icon: 'location_city', roles: ['admin'] },
+        { label: 'CRUD de cupons', route: '/admin', icon: 'sell', roles: ['admin'] },
+        { label: 'CRUD de taxas', route: '/admin', icon: 'percent', roles: ['admin'] },
+        { label: 'CRUD de administradores', route: '/admin', icon: 'manage_accounts', roles: ['admin'] },
+        { label: 'Aprovar estabelecimentos', route: '/admin', icon: 'verified', roles: ['admin'] },
+        { label: 'Aprovar entregadores', route: '/admin', icon: 'two_wheeler', roles: ['admin'] },
+        { label: 'Aprovar novos ADMIN', route: '/admin', icon: 'shield_person', roles: ['admin'] },
+        { label: 'Todos os pedidos', route: '/admin', icon: 'receipt_long', roles: ['admin'] },
+        { label: 'Gestao financeira', route: '/admin', icon: 'payments', roles: ['admin'] },
+        { label: 'Dashboard', route: '/admin', icon: 'dashboard', roles: ['admin'] },
+        { label: 'Auditoria', route: '/admin', icon: 'policy', roles: ['admin'] },
+        { label: 'Logs', route: '/admin', icon: 'article', roles: ['admin'] },
+        { label: 'Configuracoes gerais', route: '/admin', icon: 'settings', roles: ['admin'] }
+      ]
+    },
+    {
+      title: 'Conta',
+      links: [
+        { label: 'Meu perfil', route: '/perfil', icon: 'person', roles: ['auth'] },
+        { label: 'Alterar senha', route: '/alterar-senha', icon: 'lock_reset', roles: ['auth'] }
+      ]
+    }
+  ];
+
   toggleMobileMenu(): void {
     this.mobileMenuOpen.update((open) => !open);
   }
 
   closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.closeMobileMenu();
+    void this.router.navigateByUrl('/login');
+  }
+
+  private canSee(roles: ReadonlyArray<MenuRole>): boolean {
+    const authenticated = this.auth.isAuthenticated();
+    if (roles.includes('guest') && !authenticated) {
+      return true;
+    }
+    if (roles.includes('auth') && authenticated) {
+      return true;
+    }
+    if (roles.includes('admin') && this.auth.isAdmin()) {
+      return true;
+    }
+    if (roles.includes('store') && (this.auth.isStoreUser() || this.auth.isAdmin())) {
+      return true;
+    }
+    if (roles.includes('courier') && (this.auth.hasRole('COURIER') || this.auth.isAdmin())) {
+      return true;
+    }
+    return roles.includes('customer') && authenticated;
   }
 }

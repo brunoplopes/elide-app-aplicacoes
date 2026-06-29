@@ -29,7 +29,15 @@ export class AuthService {
   }
 
   changePassword(payload: { currentPassword: string; newPassword: string; confirmPassword: string }) {
-    return this.api.changePassword(payload);
+    return this.api.changePassword(payload).pipe(tap(() => {
+      const current = this.profileSignal();
+      if (!current) {
+        return;
+      }
+      const updated = { ...current, mustChangePassword: false };
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(updated));
+      this.profileSignal.set(updated);
+    }));
   }
 
   logout(): void {

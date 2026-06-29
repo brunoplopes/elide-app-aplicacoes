@@ -27,3 +27,5 @@ Backend:
 
 Frontend Cliente
 - Implemente as chamadas para api do Cliente no frontend
+
+Valide no final se todas as funcionalidades foram criadas no frontend e backend

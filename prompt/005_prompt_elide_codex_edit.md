@@ -17,7 +17,7 @@ Na aplicação, ela deve ser armazenada **criptografada com BCrypt**.
 
 No primeiro acesso, o administrador deve ser obrigado a alterar a senha inicial.
 
-Funcionalidades e permissões do administrador no backend e frontend:
+Funcionalidades e permissões do administrador:
 
 - CRUD de lojas
 - CRUD de categorias
@@ -43,3 +43,11 @@ Regras de acesso:
 - Nenhum usuário comum pode acessar o painel administrativo.
 - Implementar controle de permissões baseado em papéis, usando RBAC.
 - O administrador principal deve ter acesso total ao sistema ELIDE.
+
+Backend:
+- implemente todas as funcionalidades do Administrador no backend
+
+Frontend Entregador
+- Implemente as chamadas para api do Administrador no frontend
+
+Valide no final se todas as funcionalidades foram criadas no frontend e backend

@@ -22,3 +22,5 @@ Backend:
 
 Frontend Entregador
 - Implemente as chamadas para api do Entregador no frontend
+
+Valide no final se todas as funcionalidades foram criadas no frontend e backend

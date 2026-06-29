@@ -1,0 +1,132 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.opentelemetry.instrumentation",
+    "module": "opentelemetry-instrumentation-bom",
+    "version": "2.12.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.12"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "platform",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-bom",
+          "version": {
+            "requires": "1.46.0"
+          },
+          "attributes": {
+            "org.gradle.category": "platform"
+          },
+          "endorseStrictVersions": true
+        }
+      ],
+      "dependencyConstraints": [
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-instrumentation-annotations",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-instrumentation-api",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.javaagent",
+          "module": "opentelemetry-javaagent",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-spring-boot-autoconfigure",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-spring-boot-starter",
+          "version": {
+            "requires": "2.12.0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "platform",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-bom",
+          "version": {
+            "requires": "1.46.0"
+          },
+          "attributes": {
+            "org.gradle.category": "platform"
+          },
+          "endorseStrictVersions": true
+        }
+      ],
+      "dependencyConstraints": [
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-instrumentation-annotations",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-instrumentation-api",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.javaagent",
+          "module": "opentelemetry-javaagent",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-spring-boot-autoconfigure",
+          "version": {
+            "requires": "2.12.0"
+          }
+        },
+        {
+          "group": "io.opentelemetry.instrumentation",
+          "module": "opentelemetry-spring-boot-starter",
+          "version": {
+            "requires": "2.12.0"
+          }
+        }
+      ]
+    }
+  ]
+}

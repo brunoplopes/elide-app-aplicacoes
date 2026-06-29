@@ -9,10 +9,25 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
     List<OrderEntity> findTop20ByCustomerUsernameOrderByCreatedAtDesc(String username);
+
+    Optional<OrderEntity> findFirstByCustomerUsernameAndDeletedAtIsNullOrderByCreatedAtDesc(String username);
+
+    long countByCustomerUsernameAndDeletedAtIsNull(String username);
+
+    List<OrderEntity> findTop50ByCourierIsNullAndStatusInAndDeletedAtIsNullOrderByCreatedAtAsc(List<OrderStatus> statuses);
+
+    List<OrderEntity> findTop50ByCourierIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID courierId);
+
+    Optional<OrderEntity> findFirstByCourierIdAndStatusInAndDeletedAtIsNullOrderByCreatedAtDesc(UUID courierId, List<OrderStatus> statuses);
+
+    long countByCourierIdAndStatusAndDeletedAtIsNull(UUID courierId, OrderStatus status);
+
+    long countByCourierIdAndStatusAndCreatedAtBetweenAndDeletedAtIsNull(UUID courierId, OrderStatus status, Instant from, Instant to);
 
     List<OrderEntity> findTop50ByStoreIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID storeId);
 

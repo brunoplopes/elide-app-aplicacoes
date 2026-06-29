@@ -10,6 +10,39 @@
 
   @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
 
+  <form class="address-form" [formGroup]="page.form" (ngSubmit)="page.save()">
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Apelido</mat-label>
+        <input matInput formControlName="label" placeholder="Casa">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Rua</mat-label>
+        <input matInput formControlName="street" placeholder="Rua das Flores">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Numero</mat-label>
+        <input matInput formControlName="number" placeholder="120">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Bairro</mat-label>
+        <input matInput formControlName="district" placeholder="Centro">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>CEP</mat-label>
+        <input matInput formControlName="zipCode" placeholder="00000-000">
+      </mat-form-field>
+    </div>
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="page.saving()">
+        {{ page.editingId() ? 'Atualizar endereco' : 'Salvar endereco' }}
+      </button>
+      @if (page.editingId()) {
+        <button mat-button type="button" (click)="page.reset()">Cancelar</button>
+      }
+    </div>
+  </form>
+
   @if (page.vm().metrics?.length) {
     <div class="metric-grid">
       @for (metric of page.vm().metrics; track metric.label) {
@@ -38,7 +71,14 @@
           <strong>{{ card.title }}</strong>
           <span>{{ card.description }}</span>
           @if (card.meta) { <small>{{ card.meta }}</small> }
-          @if (card.action) { <button mat-button type="button">{{ card.action }}</button> }
+          @if (card.action) {
+            <div class="card-actions">
+              <button mat-button type="button" (click)="page.edit(page.addresses()[$index])">{{ card.action }}</button>
+              <button mat-icon-button type="button" aria-label="Remover endereco" (click)="page.remove(page.addresses()[$index].id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
         </article>
       }
     </div>

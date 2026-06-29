@@ -26,3 +26,5 @@ Backend:
 
 Frontend
 - Implemente as chamadas para api do Estabelecimento no frontend
+
+Valide no final se todas as funcionalidades foram criadas no frontend e backend

@@ -1,6 +1,7 @@
 package br.com.elide.interfaces.rest;
 
 import br.com.elide.application.AdminDashboardService;
+import br.com.elide.application.AdminManagementService;
 import br.com.elide.application.dto.MarketplaceDtos.DashboardResponse;
 import br.com.elide.infrastructure.config.SecurityConfig;
 import br.com.elide.infrastructure.persistence.repository.StoreRepository;
@@ -8,12 +9,14 @@ import br.com.elide.infrastructure.persistence.repository.UserRepository;
 import br.com.elide.infrastructure.security.ElideUserDetailsService;
 import br.com.elide.infrastructure.security.JwtAuthenticationFilter;
 import br.com.elide.infrastructure.security.JwtService;
+import br.com.elide.infrastructure.security.MustChangePasswordFilter;
 import br.com.elide.infrastructure.security.RateLimitFilter;
 import br.com.elide.infrastructure.security.SecurityProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,13 +29,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminController.class)
-@Import({SecurityConfig.class, RateLimitFilter.class, JwtAuthenticationFilter.class})
+@Import({SecurityConfig.class, RateLimitFilter.class, JwtAuthenticationFilter.class, MustChangePasswordFilter.class})
 class AdminSecurityTest {
     @Autowired
     MockMvc mvc;
 
     @MockitoBean
     AdminDashboardService dashboardService;
+
+    @MockitoBean
+    AdminManagementService adminManagementService;
+
+    @MockitoBean
+    JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @MockitoBean
     UserRepository users;

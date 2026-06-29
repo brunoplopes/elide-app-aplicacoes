@@ -1,14 +1,257 @@
-<section class="elide-section">
-  <elide-client-heading eyebrow="Administracao" title="Painel Administrativo" description="Gestao operacional, financeira, auditoria e aprovacoes." />
+<section class="admin-page">
+  <elide-client-heading
+    eyebrow="Administracao"
+    title="Painel Administrativo"
+    description="Controle de operacao, RBAC, financeiro, auditoria e configuracoes do sistema."
+  />
+
+  @if (page.message()) {
+    <p class="api-message">{{ page.message() }}</p>
+  }
+
   <div class="metric-grid">
     @for (metric of page.metrics(); track metric.label) {
       <elide-metric-card [label]="metric.label" [value]="metric.value" [icon]="metric.icon" />
     }
   </div>
+
   <mat-tab-group class="admin-tabs">
-    <mat-tab label="Pedidos"><div class="tab-panel">@for (item of page.dashboard().ordersByStatus; track item.label) { <mat-chip>{{ item.label }}: {{ item.value }}</mat-chip> }</div></mat-tab>
-    <mat-tab label="Aprovacoes"><div class="tab-panel">Lojas e entregadores pendentes aparecem aqui.</div></mat-tab>
-    <mat-tab label="Financeiro"><div class="tab-panel">Receita: {{ page.dashboard().revenue | currency:'BRL' }}</div></mat-tab>
-    <mat-tab label="Auditoria"><div class="tab-panel">Logs e trilhas de auditoria preparados.</div></mat-tab>
+    <mat-tab label="Operacao">
+      <div class="tab-panel">
+        <section class="panel">
+          <div class="panel-heading"><h2>Pedidos</h2><button mat-button type="button" (click)="page.load()">Atualizar</button></div>
+          <div class="chip-row">
+            @for (item of page.dashboard().ordersByStatus; track item.label) {
+              <mat-chip>{{ item.label }}: {{ item.value }}</mat-chip>
+            }
+          </div>
+          <div class="list-grid">
+            @for (order of page.orders().slice(0, 12); track order.id) {
+              <article class="item-card">
+                <strong>{{ page.shortId(order.id) }}</strong>
+                <span>{{ order.storeName }} · {{ order.customerName }}</span>
+                <small>{{ order.status }} · {{ page.money(order.total) }}</small>
+              </article>
+            } @empty {
+              <article class="item-card"><strong>Nenhum pedido</strong><span>A API ainda nao retornou pedidos.</span></article>
+            }
+          </div>
+        </section>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="CRUDs">
+      <div class="tab-panel registry-grid">
+        <section class="panel">
+          <div class="panel-heading"><h2>Lojas</h2><button mat-button type="button" (click)="page.resetStore()">Limpar</button></div>
+          <form class="admin-form dense" [formGroup]="page.storeForm" (ngSubmit)="page.saveStore()">
+            <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Documento</mat-label><input matInput formControlName="document"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Segmento</mat-label><input matInput formControlName="segment"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select formControlName="status">@for (status of page.storeStatuses; track status) { <mat-option [value]="status">{{ status }}</mat-option> }</mat-select></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Entrega</mat-label><input matInput type="number" formControlName="deliveryFee"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Pedido minimo</mat-label><input matInput type="number" formControlName="minimumOrder"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="open"> Loja aberta</label>
+            <button mat-flat-button color="primary" type="submit">{{ page.editingStoreId() ? 'Atualizar loja' : 'Criar loja' }}</button>
+          </form>
+          <div class="record-list">
+            @for (store of page.stores(); track store.id) {
+              <div class="record-row">
+                <span><strong>{{ store.name }}</strong><small>{{ store.segment }} · {{ store.status }}</small></span>
+                <div><button mat-button type="button" (click)="page.editStore(store)">Editar</button><button mat-button type="button" (click)="page.deleteStore(store.id)">Excluir</button></div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>Categorias</h2><button mat-button type="button" (click)="page.resetCategory()">Limpar</button></div>
+          <form class="admin-form dense" [formGroup]="page.categoryForm" (ngSubmit)="page.saveCategory()">
+            <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Icone</mat-label><input matInput formControlName="icon"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="active"> Ativa</label>
+            <button mat-flat-button color="primary" type="submit">{{ page.editingCategoryId() ? 'Atualizar categoria' : 'Criar categoria' }}</button>
+          </form>
+          <div class="record-list">
+            @for (category of page.categories(); track category.id) {
+              <div class="record-row"><span><strong>{{ category.name }}</strong><small>{{ category.icon }}</small></span><div><button mat-button type="button" (click)="page.editCategory(category)">Editar</button><button mat-button type="button" (click)="page.deleteCategory(category.id)">Excluir</button></div></div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>Banners</h2><button mat-button type="button" (click)="page.resetBanner()">Limpar</button></div>
+          <form class="admin-form dense" [formGroup]="page.bannerForm" (ngSubmit)="page.saveBanner()">
+            <mat-form-field appearance="outline"><mat-label>Titulo</mat-label><input matInput formControlName="title"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Imagem</mat-label><input matInput formControlName="imageUrl"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="active"> Ativo</label>
+            <button mat-flat-button color="primary" type="submit">{{ page.editingBannerId() ? 'Atualizar banner' : 'Criar banner' }}</button>
+          </form>
+          <div class="record-list">
+            @for (banner of page.banners(); track banner.id) {
+              <div class="record-row"><span><strong>{{ banner.title }}</strong><small>{{ banner.active ? 'Ativo' : 'Inativo' }}</small></span><div><button mat-button type="button" (click)="page.editBanner(banner)">Editar</button><button mat-button type="button" (click)="page.deleteBanner(banner.id)">Excluir</button></div></div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>Cidades</h2><button mat-button type="button" (click)="page.resetCity()">Limpar</button></div>
+          <form class="admin-form dense" [formGroup]="page.cityForm" (ngSubmit)="page.saveCity()">
+            <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>UF</mat-label><input matInput formControlName="state"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="active"> Ativa</label>
+            <button mat-flat-button color="primary" type="submit">{{ page.editingCityId() ? 'Atualizar cidade' : 'Criar cidade' }}</button>
+          </form>
+          <div class="record-list">
+            @for (city of page.cities(); track city.id) {
+              <div class="record-row"><span><strong>{{ city.name }}</strong><small>{{ city.state }}</small></span><div><button mat-button type="button" (click)="page.editCity(city)">Editar</button><button mat-button type="button" (click)="page.deleteCity(city.id)">Excluir</button></div></div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>Cupons</h2><button mat-button type="button" (click)="page.resetCoupon()">Limpar</button></div>
+          <form class="admin-form dense" [formGroup]="page.couponForm" (ngSubmit)="page.saveCoupon()">
+            <mat-form-field appearance="outline"><mat-label>Codigo</mat-label><input matInput formControlName="code"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Desconto</mat-label><input matInput type="number" formControlName="discountValue"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="active"> Ativo</label>
+            <button mat-flat-button color="primary" type="submit">{{ page.editingCouponId() ? 'Atualizar cupom' : 'Criar cupom' }}</button>
+          </form>
+          <div class="record-list">
+            @for (coupon of page.coupons(); track coupon.id) {
+              <div class="record-row"><span><strong>{{ coupon.code }}</strong><small>{{ page.money(coupon.discountValue) }}</small></span><div><button mat-button type="button" (click)="page.editCoupon(coupon)">Editar</button><button mat-button type="button" (click)="page.deleteCoupon(coupon.id)">Excluir</button></div></div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>Taxas</h2><button mat-button type="button" (click)="page.resetFee()">Limpar</button></div>
+          <form class="admin-form dense" [formGroup]="page.feeForm" (ngSubmit)="page.saveFee()">
+            <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Valor</mat-label><input matInput type="number" formControlName="value"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="percentage"> Percentual</label>
+            <button mat-flat-button color="primary" type="submit">{{ page.editingFeeId() ? 'Atualizar taxa' : 'Criar taxa' }}</button>
+          </form>
+          <div class="record-list">
+            @for (fee of page.fees(); track fee.id) {
+              <div class="record-row"><span><strong>{{ fee.name }}</strong><small>{{ fee.percentage ? fee.value + '%' : page.money(fee.value) }}</small></span><div><button mat-button type="button" (click)="page.editFee(fee)">Editar</button><button mat-button type="button" (click)="page.deleteFee(fee.id)">Excluir</button></div></div>
+            }
+          </div>
+        </section>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Aprovacoes">
+      <div class="tab-panel registry-grid">
+        <section class="panel">
+          <h2>Estabelecimentos</h2>
+          @for (store of page.pendingStores(); track store.id) {
+            <div class="approval-row">
+              <div><strong>{{ store.name }}</strong><span>{{ store.document }} · {{ store.status }}</span></div>
+              <div><button mat-flat-button color="primary" type="button" (click)="page.approveStore(store.id)">Aprovar</button><button mat-button type="button" (click)="page.rejectStore(store.id)">Reprovar</button></div>
+            </div>
+          } @empty {
+            <div class="row-line"><strong>Sem pendencias</strong><span>Nenhuma loja aguardando validacao.</span></div>
+          }
+        </section>
+        <section class="panel">
+          <h2>Entregadores</h2>
+          @for (courier of page.pendingCouriers(); track courier.id) {
+            <div class="approval-row">
+              <div><strong>{{ courier.fullName }}</strong><span>{{ courier.vehicleType }} · {{ courier.status }}</span></div>
+              <div><button mat-flat-button color="primary" type="button" (click)="page.approveCourier(courier.id)">Aprovar</button><button mat-button type="button" (click)="page.rejectCourier(courier.id)">Reprovar</button></div>
+            </div>
+          } @empty {
+            <div class="row-line"><strong>Sem pendencias</strong><span>Nenhum entregador aguardando validacao.</span></div>
+          }
+        </section>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Financeiro">
+      <div class="tab-panel">
+        <section class="finance-grid">
+          <article class="finance-card"><span>Receita</span><strong>{{ page.money(page.financial().revenue) }}</strong></article>
+          <article class="finance-card"><span>Repasse entregadores</span><strong>{{ page.money(page.financial().courierPayout) }}</strong></article>
+          <article class="finance-card"><span>Saldo plataforma</span><strong>{{ page.money(page.financial().platformBalance) }}</strong></article>
+        </section>
+        <section class="panel">
+          <h2>Extrato</h2>
+          @for (entry of page.financialEntries(); track entry.id) {
+            <div class="row-line"><strong>{{ entry.type }}</strong><span>{{ entry.storeName || entry.courierName || 'Sistema' }} · {{ page.money(entry.amount) }}</span></div>
+          } @empty {
+            <div class="row-line"><strong>Sem lancamentos</strong><span>Nenhum item financeiro retornado.</span></div>
+          }
+        </section>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="RBAC">
+      <div class="tab-panel registry-grid">
+        <section class="panel">
+          <div class="panel-heading"><h2>Administradores</h2><button mat-button type="button" (click)="page.resetAdmin()">Limpar</button></div>
+          <form class="admin-form" [formGroup]="page.adminForm" (ngSubmit)="page.saveAdmin()">
+            <mat-form-field appearance="outline"><mat-label>Usuario</mat-label><input matInput formControlName="username"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput formControlName="email"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="fullName"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Senha inicial</mat-label><input matInput formControlName="password"></mat-form-field>
+            <label class="check-line"><input type="checkbox" formControlName="enabled"> Ativo</label>
+            <label class="check-line"><input type="checkbox" formControlName="mustChangePassword"> Troca obrigatoria</label>
+            <button mat-flat-button color="primary" type="submit" [disabled]="!page.isMaster()">{{ page.editingAdminId() ? 'Atualizar ADMIN' : 'Criar ADMIN' }}</button>
+          </form>
+        </section>
+        <section class="panel">
+          <h2>Lista ADMIN</h2>
+          <div class="record-list">
+            @for (admin of page.admins(); track admin.id) {
+              <div class="record-row">
+                <span><strong>{{ admin.fullName }}</strong><small>{{ admin.username }} · {{ admin.roles.join(', ') }} · {{ admin.enabled ? 'Ativo' : 'Inativo' }}</small></span>
+                <div>
+                  <button mat-button type="button" (click)="page.editAdmin(admin)">Editar</button>
+                  <button mat-button type="button" (click)="page.approveAdmin(admin.id, !admin.enabled)">{{ admin.enabled ? 'Desativar' : 'Aprovar' }}</button>
+                  <button mat-button type="button" (click)="page.deleteAdmin(admin.id)">Excluir</button>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Auditoria">
+      <div class="tab-panel">
+        <section class="panel">
+          <h2>Auditoria e logs</h2>
+          <div class="audit-list">
+            @for (log of page.audit(); track log.id) {
+              <div><strong>{{ log.action }}</strong><span>{{ log.resource }} · {{ log.actorUsername }}</span><small>{{ log.createdAt | date:'short' }}</small></div>
+            } @empty {
+              <div><strong>Sem logs</strong><span>Acoes administrativas aparecem aqui.</span></div>
+            }
+          </div>
+        </section>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Configuracoes">
+      <div class="tab-panel registry-grid">
+        <section class="panel">
+          <h2>Gerais do sistema</h2>
+          <form class="admin-form" [formGroup]="page.settingForm" (ngSubmit)="page.saveSetting()">
+            <mat-form-field appearance="outline"><mat-label>Chave</mat-label><input matInput formControlName="keyName"></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Valor</mat-label><input matInput formControlName="value"></mat-form-field>
+            <button mat-flat-button color="primary" type="submit">Salvar configuracao</button>
+          </form>
+        </section>
+        <section class="panel">
+          <h2>Atuais</h2>
+          <div class="record-list">
+            @for (setting of page.settings(); track setting.id) {
+              <div class="record-row"><span><strong>{{ setting.keyName }}</strong><small>{{ setting.value }}</small></span><div><button mat-button type="button" (click)="page.editSetting(setting)">Editar</button></div></div>
+            }
+          </div>
+        </section>
+      </div>
+    </mat-tab>
   </mat-tab-group>
 </section>

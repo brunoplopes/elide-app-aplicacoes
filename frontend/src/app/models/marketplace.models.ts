@@ -335,3 +335,254 @@ export interface CustomerSummary {
   walletBalance: number;
   favorites: number;
 }
+
+export type CourierStatus = 'PENDING_DOCUMENTS' | 'PENDING_APPROVAL' | 'AVAILABLE' | 'UNAVAILABLE' | 'SUSPENDED' | 'REJECTED';
+
+export interface CourierSignupRequest {
+  document: string;
+  vehicleType: string;
+}
+
+export interface CourierProfileResponse extends CourierSignupRequest {
+  id: string;
+  fullName: string;
+  email: string;
+  status: CourierStatus;
+  available: boolean;
+}
+
+export interface CourierDocumentRequest {
+  type: string;
+  fileUrl: string;
+}
+
+export interface CourierDocumentResponse extends CourierDocumentRequest {
+  id: string;
+  status: string;
+  rejectionReason?: string | null;
+  createdAt: string;
+}
+
+export interface CourierApprovalRequest {
+  status: CourierStatus;
+  reason?: string | null;
+}
+
+export interface CourierAvailabilityRequest {
+  available: boolean;
+}
+
+export interface CourierLocationRequest {
+  latitude: number;
+  longitude: number;
+  heading?: number | null;
+  speed?: number | null;
+}
+
+export interface CourierLocationResponse extends CourierLocationRequest {
+  id: string;
+  createdAt: string;
+}
+
+export interface CourierDeliveryResponse {
+  id: string;
+  storeName: string;
+  customerName: string;
+  status: OrderStatus;
+  deliveryFee: number;
+  total: number;
+  etaMinutes: number;
+  distanceMeters: number;
+  createdAt: string;
+}
+
+export interface CourierDeclineRequest {
+  reason?: string | null;
+}
+
+export interface CourierFinancialEntryResponse {
+  id: string;
+  orderId?: string | null;
+  type: string;
+  amount: number;
+  createdAt: string;
+}
+
+export interface CourierEarningsResponse {
+  daily: number;
+  monthly: number;
+  statement: CourierFinancialEntryResponse[];
+}
+
+export interface CourierMapResponse {
+  location?: CourierLocationResponse | null;
+  activeDelivery?: CourierDeliveryResponse | null;
+  encodedPolyline?: string | null;
+}
+
+export interface CourierDashboardResponse {
+  profile: CourierProfileResponse;
+  dailyEarnings: number;
+  monthlyEarnings: number;
+  deliveriesToday: number;
+  completedDeliveries: number;
+  availableRides: number;
+  activeDelivery?: CourierDeliveryResponse | null;
+}
+
+export interface AdminStoreRequest {
+  name: string;
+  document: string;
+  segment: string;
+  status: StoreStatus;
+  cityId?: string | null;
+  ownerId?: string | null;
+  deliveryFee: number;
+  minimumOrder: number;
+  open: boolean;
+}
+
+export interface AdminStoreResponse extends AdminStoreRequest {
+  id: string;
+  cityName?: string | null;
+  ownerUsername?: string | null;
+}
+
+export interface AdminCategoryRequest {
+  name: string;
+  icon: string;
+  active: boolean;
+}
+
+export interface AdminCategoryResponse extends AdminCategoryRequest {
+  id: string;
+}
+
+export interface AdminBannerRequest {
+  title: string;
+  imageUrl: string;
+  active: boolean;
+}
+
+export interface AdminBannerResponse extends AdminBannerRequest {
+  id: string;
+}
+
+export interface AdminCityRequest {
+  name: string;
+  state: string;
+  active: boolean;
+}
+
+export interface AdminCityResponse extends AdminCityRequest {
+  id: string;
+}
+
+export interface AdminCouponRequest {
+  code: string;
+  discountValue: number;
+  active: boolean;
+}
+
+export interface AdminCouponResponse extends AdminCouponRequest {
+  id: string;
+}
+
+export interface AdminFeeRequest {
+  name: string;
+  value: number;
+  percentage: boolean;
+}
+
+export interface AdminFeeResponse extends AdminFeeRequest {
+  id: string;
+}
+
+export interface AdminSettingRequest {
+  keyName: string;
+  value: string;
+}
+
+export interface AdminSettingResponse extends AdminSettingRequest {
+  id: string;
+}
+
+export interface AdminUserRequest {
+  username: string;
+  email: string;
+  password: string;
+  fullName: string;
+  role: RoleName;
+  enabled: boolean;
+}
+
+export interface AdminUserUpdateRequest {
+  email: string;
+  fullName: string;
+  enabled: boolean;
+  mustChangePassword: boolean;
+}
+
+export interface AdminApprovalRequest {
+  status: string;
+  reason?: string | null;
+}
+
+export interface AdminUserResponse {
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  enabled: boolean;
+  mustChangePassword: boolean;
+  roles: RoleName[];
+}
+
+export interface AdminCourierResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  document: string;
+  vehicleType: string;
+  status: CourierStatus;
+}
+
+export interface AdminOrderResponse {
+  id: string;
+  customerName: string;
+  storeName: string;
+  courierName?: string | null;
+  status: OrderStatus;
+  paymentMethod: string;
+  subtotal: number;
+  deliveryFee: number;
+  discount: number;
+  total: number;
+  createdAt: string;
+}
+
+export interface AdminFinancialSummaryResponse {
+  revenue: number;
+  courierPayout: number;
+  platformBalance: number;
+  entries: number;
+}
+
+export interface AdminFinancialEntryResponse {
+  id: string;
+  orderId?: string | null;
+  storeName?: string | null;
+  courierName?: string | null;
+  type: string;
+  amount: number;
+  createdAt: string;
+}
+
+export interface AdminAuditResponse {
+  id: string;
+  actorUsername: string;
+  action: string;
+  resource: string;
+  ipAddress: string;
+  createdAt: string;
+}

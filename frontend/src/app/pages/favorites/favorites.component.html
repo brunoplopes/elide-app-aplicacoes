@@ -38,7 +38,11 @@
           <strong>{{ card.title }}</strong>
           <span>{{ card.description }}</span>
           @if (card.meta) { <small>{{ card.meta }}</small> }
-          @if (card.action) { <button mat-button type="button" (click)="card.action === 'Remover' ? page.remove(card.path ?? '') : null">{{ card.action }}</button> }
+          @if (card.action) {
+            <button mat-button type="button" (click)="card.action === 'Remover' ? page.remove(card.path ?? '') : page.add(card.path ?? '')">
+              {{ card.action }}
+            </button>
+          }
         </article>
       }
     </div>

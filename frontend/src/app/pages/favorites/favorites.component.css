@@ -7,3 +7,16 @@
   color: var(--elide-orange);
   font-weight: 800;
 }
+
+.feature-card button {
+  align-self: flex-start;
+  min-height: 40px;
+  border-radius: 12px;
+  font-weight: 900;
+}
+
+@media (max-width: 560px) {
+  .feature-card button {
+    width: 100%;
+  }
+}

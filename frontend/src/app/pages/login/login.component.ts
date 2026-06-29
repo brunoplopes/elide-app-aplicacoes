@@ -31,7 +31,13 @@ export class LoginPageComponent {
     }
 
     this.auth.login(this.form.controls.username.value, this.form.controls.password.value).subscribe({
-      next: () => void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/cliente'),
+      next: (profile) => {
+        if (profile.mustChangePassword) {
+          void this.router.navigateByUrl('/alterar-senha');
+          return;
+        }
+        void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/cliente');
+      },
       error: () => this.error.set('Credenciais invalidas ou servidor indisponivel.')
     });
   }
