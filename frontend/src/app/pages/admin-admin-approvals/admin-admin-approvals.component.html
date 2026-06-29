@@ -1,0 +1,16 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="RBAC" title="Aprovacao de novos ADMIN" description="Ative ou bloqueie administradores criados pelo MASTER_ADMIN." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <h2>Administradores ADMIN</h2>
+    @for (admin of page.admins(); track admin.id) {
+      <div class="approval-row">
+        <div><strong>{{ admin.fullName }}</strong><span>{{ admin.username }} - {{ admin.roles.join(', ') }} - {{ admin.enabled ? 'Ativo' : 'Inativo' }}</span></div>
+        <div><button mat-flat-button color="primary" type="button" [disabled]="!page.isMaster()" (click)="page.approveAdmin(admin.id, true)">Aprovar</button><button mat-button type="button" [disabled]="!page.isMaster()" (click)="page.approveAdmin(admin.id, false)">Desativar</button></div>
+      </div>
+    } @empty {
+      <div class="row-line"><strong>Sem administradores</strong><span>Nenhum ADMIN retornado.</span></div>
+    }
+  </section>
+</section>

@@ -1,0 +1,37 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="RBAC" title="CRUD de administradores" description="Somente MASTER_ADMIN pode criar, aprovar, editar e remover ADMIN." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <div class="registry-grid">
+    <section class="panel">
+      <div class="panel-heading"><h2>Administrador ADMIN</h2><button mat-button type="button" (click)="page.resetAdmin()">Limpar</button></div>
+      <form class="admin-form" [formGroup]="page.adminForm" (ngSubmit)="page.saveAdmin()">
+        <mat-form-field appearance="outline"><mat-label>Usuario</mat-label><input matInput formControlName="username"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput formControlName="email"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="fullName"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Senha inicial</mat-label><input matInput formControlName="password"></mat-form-field>
+        <label class="check-line"><input type="checkbox" formControlName="enabled"> Ativo</label>
+        <label class="check-line"><input type="checkbox" formControlName="mustChangePassword"> Troca obrigatoria</label>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!page.isMaster()">{{ page.editingAdminId() ? 'Atualizar ADMIN' : 'Criar ADMIN' }}</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Administradores</h2>
+      <div class="record-list">
+        @for (admin of page.admins(); track admin.id) {
+          <div class="record-row">
+            <span><strong>{{ admin.fullName }}</strong><small>{{ admin.username }} - {{ admin.roles.join(', ') }} - {{ admin.enabled ? 'Ativo' : 'Inativo' }}</small></span>
+            <div>
+              <button mat-button type="button" (click)="page.editAdmin(admin)">Editar</button>
+              <button mat-button type="button" (click)="page.approveAdmin(admin.id, !admin.enabled)">{{ admin.enabled ? 'Desativar' : 'Aprovar' }}</button>
+              <button mat-button type="button" (click)="page.deleteAdmin(admin.id)">Excluir</button>
+            </div>
+          </div>
+        } @empty {
+          <div class="row-line"><strong>Sem administradores</strong><span>Nenhum ADMIN retornado.</span></div>
+        }
+      </div>
+    </section>
+  </div>
+</section>

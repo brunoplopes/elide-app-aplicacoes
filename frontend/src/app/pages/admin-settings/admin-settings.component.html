@@ -1,0 +1,26 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Sistema" title="Configuracoes gerais" description="Edite parametros globais usados pela plataforma." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <div class="registry-grid">
+    <section class="panel">
+      <h2>Parametro</h2>
+      <form class="admin-form" [formGroup]="page.settingForm" (ngSubmit)="page.saveSetting()">
+        <mat-form-field appearance="outline"><mat-label>Chave</mat-label><input matInput formControlName="keyName"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Valor</mat-label><input matInput formControlName="value"></mat-form-field>
+        <button mat-flat-button color="primary" type="submit">Salvar configuracao</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Configuracoes atuais</h2>
+      <div class="record-list">
+        @for (setting of page.settings(); track setting.id) {
+          <div class="record-row"><span><strong>{{ setting.keyName }}</strong><small>{{ setting.value }}</small></span><div><button mat-button type="button" (click)="page.editSetting(setting)">Editar</button></div></div>
+        } @empty {
+          <div class="row-line"><strong>Sem configuracoes</strong><span>Nenhum parametro retornado.</span></div>
+        }
+      </div>
+    </section>
+  </div>
+</section>

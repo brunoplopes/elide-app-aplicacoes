@@ -38,7 +38,7 @@ export class ChangePasswordPageComponent {
     this.auth.changePassword(value).subscribe({
       next: () => {
         this.message.set('Senha atualizada com sucesso.');
-        void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/cliente');
+        void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin/dashboard' : '/cliente');
       },
       error: () => this.message.set('Endpoint /auth/change-password ainda nao respondeu.')
     });

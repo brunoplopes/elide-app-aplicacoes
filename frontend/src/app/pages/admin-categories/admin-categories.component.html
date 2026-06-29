@@ -1,0 +1,21 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Administrador" title="CRUD de categorias" description="Organize as categorias exibidas no marketplace." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <div class="panel-heading"><h2>Categorias</h2><button mat-button type="button" (click)="page.resetCategory()">Limpar</button></div>
+    <form class="admin-form dense" [formGroup]="page.categoryForm" (ngSubmit)="page.saveCategory()">
+      <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Icone</mat-label><input matInput formControlName="icon"></mat-form-field>
+      <label class="check-line"><input type="checkbox" formControlName="active"> Ativa</label>
+      <button mat-flat-button color="primary" type="submit">{{ page.editingCategoryId() ? 'Atualizar categoria' : 'Criar categoria' }}</button>
+    </form>
+    <div class="record-list">
+      @for (category of page.categories(); track category.id) {
+        <div class="record-row"><span><strong>{{ category.name }}</strong><small>{{ category.icon }} - {{ category.active ? 'Ativa' : 'Inativa' }}</small></span><div><button mat-button type="button" (click)="page.editCategory(category)">Editar</button><button mat-button type="button" (click)="page.deleteCategory(category.id)">Excluir</button></div></div>
+      } @empty {
+        <div class="row-line"><strong>Sem categorias</strong><span>Nenhum registro retornado.</span></div>
+      }
+    </div>
+  </section>
+</section>

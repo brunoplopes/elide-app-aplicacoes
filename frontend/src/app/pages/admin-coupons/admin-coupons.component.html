@@ -1,0 +1,21 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Administrador" title="CRUD de cupons" description="Crie campanhas de desconto e acompanhe cupons ativos." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <div class="panel-heading"><h2>Cupons</h2><button mat-button type="button" (click)="page.resetCoupon()">Limpar</button></div>
+    <form class="admin-form dense" [formGroup]="page.couponForm" (ngSubmit)="page.saveCoupon()">
+      <mat-form-field appearance="outline"><mat-label>Codigo</mat-label><input matInput formControlName="code"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Desconto</mat-label><input matInput type="number" formControlName="discountValue"></mat-form-field>
+      <label class="check-line"><input type="checkbox" formControlName="active"> Ativo</label>
+      <button mat-flat-button color="primary" type="submit">{{ page.editingCouponId() ? 'Atualizar cupom' : 'Criar cupom' }}</button>
+    </form>
+    <div class="record-list">
+      @for (coupon of page.coupons(); track coupon.id) {
+        <div class="record-row"><span><strong>{{ coupon.code }}</strong><small>{{ page.money(coupon.discountValue) }} - {{ coupon.active ? 'Ativo' : 'Inativo' }}</small></span><div><button mat-button type="button" (click)="page.editCoupon(coupon)">Editar</button><button mat-button type="button" (click)="page.deleteCoupon(coupon.id)">Excluir</button></div></div>
+      } @empty {
+        <div class="row-line"><strong>Sem cupons</strong><span>Nenhum registro retornado.</span></div>
+      }
+    </div>
+  </section>
+</section>

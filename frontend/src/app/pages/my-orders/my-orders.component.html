@@ -10,8 +10,9 @@
         </div>
         <div class="order-actions">
           <button mat-button type="button">Recomprar</button>
-          <button mat-button type="button">Reembolso</button>
-          <button mat-flat-button type="button">Avaliar</button>
+          <button mat-button type="button" (click)="page.cancel(order.id)">Cancelar</button>
+          <button mat-button type="button" (click)="page.refund(order.id)">Reembolso</button>
+          <a mat-flat-button [routerLink]="['/rastreamento']">Acompanhar</a>
         </div>
         <mat-progress-bar mode="determinate" [value]="page.progress(order.status)" />
       </article>

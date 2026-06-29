@@ -1,0 +1,16 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Aprovacoes" title="Cadastro e aprovacao de estabelecimentos" description="Valide documentacao, aprove ou reprove lojas pendentes." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <h2>Estabelecimentos pendentes</h2>
+    @for (store of page.pendingStores(); track store.id) {
+      <div class="approval-row">
+        <div><strong>{{ store.name }}</strong><span>{{ store.document }} - {{ store.segment }} - {{ store.status }}</span></div>
+        <div><button mat-flat-button color="primary" type="button" (click)="page.approveStore(store.id)">Aprovar</button><button mat-button type="button" (click)="page.rejectStore(store.id)">Reprovar</button></div>
+      </div>
+    } @empty {
+      <div class="row-line"><strong>Sem pendencias</strong><span>Nenhuma loja aguardando validacao.</span></div>
+    }
+  </section>
+</section>

@@ -1,0 +1,21 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Administrador" title="CRUD de cidades" description="Gerencie as cidades atendidas pela ELIDE." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <div class="panel-heading"><h2>Cidades</h2><button mat-button type="button" (click)="page.resetCity()">Limpar</button></div>
+    <form class="admin-form dense" [formGroup]="page.cityForm" (ngSubmit)="page.saveCity()">
+      <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>UF</mat-label><input matInput formControlName="state"></mat-form-field>
+      <label class="check-line"><input type="checkbox" formControlName="active"> Ativa</label>
+      <button mat-flat-button color="primary" type="submit">{{ page.editingCityId() ? 'Atualizar cidade' : 'Criar cidade' }}</button>
+    </form>
+    <div class="record-list">
+      @for (city of page.cities(); track city.id) {
+        <div class="record-row"><span><strong>{{ city.name }}</strong><small>{{ city.state }} - {{ city.active ? 'Ativa' : 'Inativa' }}</small></span><div><button mat-button type="button" (click)="page.editCity(city)">Editar</button><button mat-button type="button" (click)="page.deleteCity(city.id)">Excluir</button></div></div>
+      } @empty {
+        <div class="row-line"><strong>Sem cidades</strong><span>Nenhum registro retornado.</span></div>
+      }
+    </div>
+  </section>
+</section>

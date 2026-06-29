@@ -1,0 +1,21 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Administrador" title="CRUD de taxas" description="Configure taxas fixas e percentuais da plataforma." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <div class="panel-heading"><h2>Taxas</h2><button mat-button type="button" (click)="page.resetFee()">Limpar</button></div>
+    <form class="admin-form dense" [formGroup]="page.feeForm" (ngSubmit)="page.saveFee()">
+      <mat-form-field appearance="outline"><mat-label>Nome</mat-label><input matInput formControlName="name"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Valor</mat-label><input matInput type="number" formControlName="value"></mat-form-field>
+      <label class="check-line"><input type="checkbox" formControlName="percentage"> Percentual</label>
+      <button mat-flat-button color="primary" type="submit">{{ page.editingFeeId() ? 'Atualizar taxa' : 'Criar taxa' }}</button>
+    </form>
+    <div class="record-list">
+      @for (fee of page.fees(); track fee.id) {
+        <div class="record-row"><span><strong>{{ fee.name }}</strong><small>{{ fee.percentage ? fee.value + '%' : page.money(fee.value) }}</small></span><div><button mat-button type="button" (click)="page.editFee(fee)">Editar</button><button mat-button type="button" (click)="page.deleteFee(fee.id)">Excluir</button></div></div>
+      } @empty {
+        <div class="row-line"><strong>Sem taxas</strong><span>Nenhum registro retornado.</span></div>
+      }
+    </div>
+  </section>
+</section>

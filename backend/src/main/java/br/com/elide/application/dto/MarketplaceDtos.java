@@ -3,6 +3,7 @@ package br.com.elide.application.dto;
 import br.com.elide.domain.model.Enums.OrderStatus;
 import br.com.elide.domain.model.Enums.PaymentMethod;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ public final class MarketplaceDtos {
     public record StoreResponse(UUID id, String name, String segment, BigDecimal deliveryFee, BigDecimal minimumOrder, boolean open) {
     }
 
-    public record ProductResponse(UUID id, String name, String description, BigDecimal price, int stockQuantity) {
+    public record ProductResponse(UUID id, UUID storeId, UUID categoryId, String name, String description, BigDecimal price, int stockQuantity) {
     }
 
     public record CreateOrderRequest(
@@ -33,10 +34,22 @@ public final class MarketplaceDtos {
     ) {
     }
 
-    public record CreateOrderItemRequest(@NotNull UUID productId, @Min(1) int quantity, String note) {
+    public record CreateOrderItemRequest(@NotNull UUID productId, @Min(1) int quantity, String note, List<OrderItemAddonRequest> addons) {
+    }
+
+    public record OrderItemAddonRequest(@NotNull UUID addonId, @Min(1) int quantity) {
     }
 
     public record OrderResponse(UUID id, OrderStatus status, BigDecimal subtotal, BigDecimal deliveryFee, BigDecimal discount, BigDecimal total) {
+    }
+
+    public record OrderActionRequest(String reason) {
+    }
+
+    public record DeliveryQuoteRequest(@NotNull UUID storeId, @NotNull UUID addressId, @DecimalMin("0.00") BigDecimal subtotal) {
+    }
+
+    public record DeliveryQuoteResponse(BigDecimal deliveryFee, int distanceMeters, int etaMinutes, String provider) {
     }
 
     public record DashboardResponse(
@@ -52,4 +65,3 @@ public final class MarketplaceDtos {
     public record StatusMetric(String label, long value) {
     }
 }
-

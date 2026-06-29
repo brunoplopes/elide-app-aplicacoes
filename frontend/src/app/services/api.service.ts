@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
@@ -43,11 +43,18 @@ export class ApiService {
     return this.http.get<Category[]>(`${API_URL}/catalog/categories`);
   }
 
-  stores(): Observable<Page<Store>> {
+  stores(filters?: { segment?: string; q?: string; size?: number }): Observable<Page<Store>> {
     if (!this.isBrowser) {
       return of(emptyPage<Store>());
     }
-    return this.http.get<Page<Store>>(`${API_URL}/catalog/stores?size=12`);
+    let params = new HttpParams().set('size', String(filters?.size ?? 12));
+    if (filters?.segment) {
+      params = params.set('segment', filters.segment);
+    }
+    if (filters?.q) {
+      params = params.set('q', filters.q);
+    }
+    return this.http.get<Page<Store>>(`${API_URL}/catalog/stores`, { params });
   }
 
   products(storeId: string): Observable<Page<Product>> {
@@ -55,6 +62,17 @@ export class ApiService {
       return of(emptyPage<Product>());
     }
     return this.http.get<Page<Product>>(`${API_URL}/catalog/stores/${storeId}/products?size=20`);
+  }
+
+  searchProducts(q?: string): Observable<Page<Product>> {
+    if (!this.isBrowser) {
+      return of(emptyPage<Product>());
+    }
+    let params = new HttpParams().set('size', '20');
+    if (q) {
+      params = params.set('q', q);
+    }
+    return this.http.get<Page<Product>>(`${API_URL}/catalog/products`, { params });
   }
 
   dashboard(): Observable<Dashboard> {

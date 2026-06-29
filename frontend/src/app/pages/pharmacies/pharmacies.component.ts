@@ -20,5 +20,5 @@ export class PharmaciesPageComponent {
 
   readonly title = 'Farmacias';
   readonly subtitle = 'Saude, beleza e conveniencia com entrega segura.';
-  readonly stores = toSignal(this.api.stores().pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
+  readonly stores = toSignal(this.api.stores({ segment: 'Farmacia' }).pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
 }

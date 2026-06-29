@@ -20,5 +20,5 @@ export class MarketsPageComponent {
 
   readonly title = 'Mercados';
   readonly subtitle = 'Compras de mercado, padaria e conveniencia para receber em casa.';
-  readonly stores = toSignal(this.api.stores().pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
+  readonly stores = toSignal(this.api.stores({ segment: 'Mercado' }).pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
 }

@@ -16,8 +16,8 @@ const emptyStores: Page<Store> = { content: [], totalElements: 0, totalPages: 0,
         <p>{{ subtitle() }}</p>
         <label class="search-box">
           <mat-icon>search</mat-icon>
-          <input placeholder="Buscar lojas, pratos ou produtos..." />
-          <a mat-flat-button routerLink="/restaurantes">Buscar</a>
+          <input #searchTerm placeholder="Buscar lojas, pratos ou produtos..." />
+          <a mat-flat-button routerLink="/busca" [queryParams]="{ q: searchTerm.value }">Buscar</a>
         </label>
       </div>
       <div class="store-grid">

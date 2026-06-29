@@ -36,7 +36,7 @@ export class LoginPageComponent {
           void this.router.navigateByUrl('/alterar-senha');
           return;
         }
-        void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/cliente');
+        void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin/dashboard' : '/cliente');
       },
       error: () => this.error.set('Credenciais invalidas ou servidor indisponivel.')
     });

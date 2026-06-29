@@ -67,6 +67,7 @@ export class AdminPanelPageComponent implements OnInit {
   readonly financialEntries = signal<AdminFinancialEntryResponse[]>([]);
   readonly settings = signal<AdminSettingResponse[]>([]);
   readonly audit = signal<AdminAuditResponse[]>([]);
+  readonly logs = signal<AdminAuditResponse[]>([]);
   readonly loading = signal(false);
   readonly message = signal<string | null>(null);
 
@@ -166,7 +167,8 @@ export class AdminPanelPageComponent implements OnInit {
       financial: this.api.financialSummary().pipe(catchError((error) => this.fail('Financeiro', { revenue: 0, courierPayout: 0, platformBalance: 0, entries: 0 }, error))),
       financialEntries: this.api.financialEntries().pipe(catchError((error) => this.fail('Extrato financeiro', [], error))),
       settings: this.api.settings().pipe(catchError((error) => this.fail('Configuracoes', [], error))),
-      audit: this.api.audit().pipe(catchError((error) => this.fail('Auditoria', [], error)))
+      audit: this.api.audit().pipe(catchError((error) => this.fail('Auditoria', [], error))),
+      logs: this.api.logs().pipe(catchError((error) => this.fail('Logs', [], error)))
     }).pipe(finalize(() => this.loading.set(false))).subscribe((data) => {
       this.dashboard.set(data.dashboard);
       this.stores.set(data.stores);
@@ -182,6 +184,7 @@ export class AdminPanelPageComponent implements OnInit {
       this.financialEntries.set(data.financialEntries);
       this.settings.set(data.settings);
       this.audit.set(data.audit);
+      this.logs.set(data.logs);
     });
   }
 

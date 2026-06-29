@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { OrderResponse, OrderStatus } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
@@ -7,7 +8,7 @@ import { ClientHeadingComponent } from '../shared/client-heading.component';
 
 @Component({
   selector: 'elide-my-orders-page',
-  imports: [...MATERIAL, ClientHeadingComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -71,5 +72,25 @@ export class MyOrdersPageComponent implements OnInit {
 
   shortId(id: string): string {
     return `ELD-${id.slice(0, 6).toUpperCase()}`;
+  }
+
+  cancel(orderId: string): void {
+    this.api.cancelOrder(orderId, 'Cancelado pelo cliente.').subscribe({
+      next: (order) => {
+        this.orders.update((orders) => orders.map((item) => item.id === order.id ? order : item));
+        this.message.set('Pedido cancelado.');
+      },
+      error: () => this.message.set('Nao foi possivel cancelar este pedido.')
+    });
+  }
+
+  refund(orderId: string): void {
+    this.api.requestRefund(orderId, 'Solicitacao aberta pelo cliente.').subscribe({
+      next: (order) => {
+        this.orders.update((orders) => orders.map((item) => item.id === order.id ? order : item));
+        this.message.set('Solicitacao de reembolso enviada.');
+      },
+      error: () => this.message.set('Nao foi possivel solicitar reembolso.')
+    });
   }
 }

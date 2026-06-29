@@ -13,6 +13,7 @@ import {
   AdminCityResponse,
   AdminCouponRequest,
   AdminCouponResponse,
+  AdminCourierRequest,
   AdminCourierResponse,
   AdminFeeRequest,
   AdminFeeResponse,
@@ -62,6 +63,10 @@ export class AdminApiService {
 
   couriers(): Observable<AdminCourierResponse[]> {
     return this.getList<AdminCourierResponse>('couriers');
+  }
+
+  createCourier(payload: AdminCourierRequest): Observable<AdminCourierResponse> {
+    return this.http.post<AdminCourierResponse>(`${API_URL}/couriers`, payload);
   }
 
   approveCourier(id: string, payload: AdminApprovalRequest): Observable<AdminCourierResponse> {

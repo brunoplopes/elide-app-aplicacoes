@@ -54,7 +54,7 @@ type MenuGroup = {
           @if (auth.isAuthenticated()) {
             <a mat-stroked-button routerLink="/perfil" class="login-pill user-pill"><mat-icon>person</mat-icon> {{ userName() }}</a>
             @if (auth.isAdmin()) {
-              <a mat-icon-button routerLink="/admin" aria-label="Painel admin" class="ghost-icon"><mat-icon>admin_panel_settings</mat-icon></a>
+              <a mat-icon-button routerLink="/admin/dashboard" aria-label="Painel admin" class="ghost-icon"><mat-icon>admin_panel_settings</mat-icon></a>
             }
             <button mat-icon-button type="button" aria-label="Sair" class="ghost-icon logout-button" (click)="logout()">
               <mat-icon>logout</mat-icon>
@@ -810,7 +810,7 @@ export class ShellLayoutComponent {
       links: [
         { label: 'Area da Loja', route: '/loja' },
         { label: 'Seja entregador', route: '/entregador' },
-        { label: 'Painel Admin', route: '/admin' },
+        { label: 'Painel Admin', route: '/admin/dashboard' },
         { label: 'Contato', route: '/contato' }
       ]
     },
@@ -833,6 +833,10 @@ export class ShellLayoutComponent {
         { label: 'Restaurantes', route: '/restaurantes', icon: 'restaurant', roles: ['guest', 'auth'] },
         { label: 'Mercados', route: '/mercados', icon: 'local_grocery_store', roles: ['guest', 'auth'] },
         { label: 'Farmacias', route: '/farmacias', icon: 'local_pharmacy', roles: ['guest', 'auth'] },
+        { label: 'Padarias', route: '/padarias', icon: 'bakery_dining', roles: ['guest', 'auth'] },
+        { label: 'Lanchonetes', route: '/lanchonetes', icon: 'lunch_dining', roles: ['guest', 'auth'] },
+        { label: 'Acougues', route: '/acougues', icon: 'set_meal', roles: ['guest', 'auth'] },
+        { label: 'Pet Shops', route: '/pet-shops', icon: 'pets', roles: ['guest', 'auth'] },
         { label: 'Carrinho', route: '/carrinho', icon: 'shopping_bag', roles: ['guest', 'auth'] },
         { label: 'Contato', route: '/contato', icon: 'support_agent', roles: ['guest', 'auth'] }
       ]
@@ -902,23 +906,23 @@ export class ShellLayoutComponent {
     {
       title: 'Administrador',
       links: [
-        { label: 'Painel administrativo', route: '/admin', icon: 'admin_panel_settings', roles: ['admin'] },
-        { label: 'CRUD de lojas', route: '/admin', icon: 'storefront', roles: ['admin'] },
-        { label: 'CRUD de categorias', route: '/admin', icon: 'category', roles: ['admin'] },
-        { label: 'CRUD de banners', route: '/admin', icon: 'image', roles: ['admin'] },
-        { label: 'CRUD de cidades', route: '/admin', icon: 'location_city', roles: ['admin'] },
-        { label: 'CRUD de cupons', route: '/admin', icon: 'sell', roles: ['admin'] },
-        { label: 'CRUD de taxas', route: '/admin', icon: 'percent', roles: ['admin'] },
-        { label: 'CRUD de administradores', route: '/admin', icon: 'manage_accounts', roles: ['admin'] },
-        { label: 'Aprovar estabelecimentos', route: '/admin', icon: 'verified', roles: ['admin'] },
-        { label: 'Aprovar entregadores', route: '/admin', icon: 'two_wheeler', roles: ['admin'] },
-        { label: 'Aprovar novos ADMIN', route: '/admin', icon: 'shield_person', roles: ['admin'] },
-        { label: 'Todos os pedidos', route: '/admin', icon: 'receipt_long', roles: ['admin'] },
-        { label: 'Gestao financeira', route: '/admin', icon: 'payments', roles: ['admin'] },
-        { label: 'Dashboard', route: '/admin', icon: 'dashboard', roles: ['admin'] },
-        { label: 'Auditoria', route: '/admin', icon: 'policy', roles: ['admin'] },
-        { label: 'Logs', route: '/admin', icon: 'article', roles: ['admin'] },
-        { label: 'Configuracoes gerais', route: '/admin', icon: 'settings', roles: ['admin'] }
+        { label: 'Painel administrativo', route: '/admin/dashboard', icon: 'admin_panel_settings', roles: ['admin'] },
+        { label: 'CRUD de lojas', route: '/admin/lojas', icon: 'storefront', roles: ['admin'] },
+        { label: 'CRUD de categorias', route: '/admin/categorias', icon: 'category', roles: ['admin'] },
+        { label: 'CRUD de banners', route: '/admin/banners', icon: 'image', roles: ['admin'] },
+        { label: 'CRUD de cidades', route: '/admin/cidades', icon: 'location_city', roles: ['admin'] },
+        { label: 'CRUD de cupons', route: '/admin/cupons', icon: 'sell', roles: ['admin'] },
+        { label: 'CRUD de taxas', route: '/admin/taxas', icon: 'percent', roles: ['admin'] },
+        { label: 'CRUD de administradores', route: '/admin/administradores', icon: 'manage_accounts', roles: ['admin'] },
+        { label: 'Aprovar estabelecimentos', route: '/admin/aprovacoes/estabelecimentos', icon: 'verified', roles: ['admin'] },
+        { label: 'Aprovar entregadores', route: '/admin/aprovacoes/entregadores', icon: 'two_wheeler', roles: ['admin'] },
+        { label: 'Aprovar novos ADMIN', route: '/admin/aprovacoes/admins', icon: 'shield_person', roles: ['admin'] },
+        { label: 'Todos os pedidos', route: '/admin/pedidos', icon: 'receipt_long', roles: ['admin'] },
+        { label: 'Gestao financeira', route: '/admin/financeiro', icon: 'payments', roles: ['admin'] },
+        { label: 'Dashboard', route: '/admin/dashboard', icon: 'dashboard', roles: ['admin'] },
+        { label: 'Auditoria', route: '/admin/auditoria', icon: 'policy', roles: ['admin'] },
+        { label: 'Logs', route: '/admin/logs', icon: 'article', roles: ['admin'] },
+        { label: 'Configuracoes gerais', route: '/admin/configuracoes', icon: 'settings', roles: ['admin'] }
       ]
     },
     {

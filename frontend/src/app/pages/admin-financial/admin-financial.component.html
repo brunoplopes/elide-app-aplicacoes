@@ -1,0 +1,19 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Financeiro" title="Gestao financeira" description="Resumo de receita, repasses e saldo da plataforma." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="finance-grid">
+    <article class="finance-card"><span>Receita</span><strong>{{ page.money(page.financial().revenue) }}</strong></article>
+    <article class="finance-card"><span>Repasse entregadores</span><strong>{{ page.money(page.financial().courierPayout) }}</strong></article>
+    <article class="finance-card"><span>Saldo plataforma</span><strong>{{ page.money(page.financial().platformBalance) }}</strong></article>
+  </section>
+
+  <section class="panel">
+    <h2>Extrato</h2>
+    @for (entry of page.financialEntries(); track entry.id) {
+      <div class="row-line"><strong>{{ entry.type }}</strong><span>{{ entry.storeName || entry.courierName || 'Sistema' }} - {{ page.money(entry.amount) }}</span></div>
+    } @empty {
+      <div class="row-line"><strong>Sem lancamentos</strong><span>Nenhum item financeiro retornado.</span></div>
+    }
+  </section>
+</section>

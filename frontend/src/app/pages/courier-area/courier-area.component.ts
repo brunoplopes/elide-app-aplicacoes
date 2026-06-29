@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import {
   CourierDashboardResponse,
@@ -18,7 +17,7 @@ import { MATERIAL, PageMetric } from '../shared/page-kit';
 
 @Component({
   selector: 'courier-area-page',
-  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, MetricCardComponent],
+  imports: [...MATERIAL, ClientHeadingComponent, MetricCardComponent],
   templateUrl: './courier-area.component.html',
   styleUrl: './courier-area.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

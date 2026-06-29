@@ -12,6 +12,7 @@ import br.com.elide.application.dto.AdminDtos.AdminCityRequest;
 import br.com.elide.application.dto.AdminDtos.AdminCityResponse;
 import br.com.elide.application.dto.AdminDtos.AdminCouponRequest;
 import br.com.elide.application.dto.AdminDtos.AdminCouponResponse;
+import br.com.elide.application.dto.AdminDtos.AdminCourierRequest;
 import br.com.elide.application.dto.AdminDtos.AdminCourierResponse;
 import br.com.elide.application.dto.AdminDtos.AdminFeeRequest;
 import br.com.elide.application.dto.AdminDtos.AdminFeeResponse;
@@ -89,6 +90,12 @@ public class AdminController {
     @GetMapping("/couriers")
     public List<AdminCourierResponse> couriers() {
         return admin.couriers();
+    }
+
+    @PostMapping("/couriers")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdminCourierResponse createCourier(@Valid @RequestBody AdminCourierRequest request) {
+        return admin.createCourier(request);
     }
 
     @PatchMapping("/couriers/{courierId}/approval")

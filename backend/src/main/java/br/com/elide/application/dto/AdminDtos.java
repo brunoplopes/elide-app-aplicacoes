@@ -96,6 +96,18 @@ public final class AdminDtos {
     public record AdminUserResponse(UUID id, String username, String email, String fullName, boolean enabled, boolean mustChangePassword, Set<String> roles) {
     }
 
+    public record AdminCourierRequest(
+        @NotBlank @Size(max = 120) String username,
+        @NotBlank @Email @Size(max = 180) String email,
+        @NotBlank @Size(min = 8, max = 120) String password,
+        @NotBlank @Size(max = 160) String fullName,
+        @NotBlank @Size(max = 14) String document,
+        @NotBlank @Size(max = 40) String vehicleType,
+        @NotNull CourierStatus status,
+        boolean enabled
+    ) {
+    }
+
     public record AdminCourierResponse(UUID id, String fullName, String email, String document, String vehicleType, CourierStatus status) {
     }
 

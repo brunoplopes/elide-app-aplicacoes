@@ -1,0 +1,44 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Aprovacoes" title="Cadastro e aprovacao de entregadores" description="Cadastre entregadores, valide documentacao e controle status operacional." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <div class="registry-grid">
+    <section class="panel">
+      <div class="panel-heading"><h2>Novo entregador</h2><button mat-button type="button" (click)="page.resetCourier()">Limpar</button></div>
+      <form class="admin-form" [formGroup]="page.courierForm" (ngSubmit)="page.saveCourier()">
+        <mat-form-field appearance="outline"><mat-label>Usuario</mat-label><input matInput formControlName="username"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput formControlName="email"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Nome completo</mat-label><input matInput formControlName="fullName"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Senha inicial</mat-label><input matInput formControlName="password"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Documento</mat-label><input matInput formControlName="document"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Veiculo</mat-label><input matInput formControlName="vehicleType"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select formControlName="status">@for (status of page.courierStatuses; track status) { <mat-option [value]="status">{{ status }}</mat-option> }</mat-select></mat-form-field>
+        <label class="check-line"><input type="checkbox" formControlName="enabled"> Usuario ativo</label>
+        <button mat-flat-button color="primary" type="submit">Cadastrar entregador</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Entregadores pendentes</h2>
+      @for (courier of page.pendingCouriers(); track courier.id) {
+        <div class="approval-row">
+          <div><strong>{{ courier.fullName }}</strong><span>{{ courier.document }} - {{ courier.vehicleType }} - {{ courier.status }}</span></div>
+          <div><button mat-flat-button color="primary" type="button" (click)="page.approveCourier(courier.id)">Aprovar</button><button mat-button type="button" (click)="page.rejectCourier(courier.id)">Reprovar</button></div>
+        </div>
+      } @empty {
+        <div class="row-line"><strong>Sem pendencias</strong><span>Nenhum entregador aguardando validacao.</span></div>
+      }
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>Todos os entregadores</h2>
+    <div class="record-list">
+      @for (courier of page.couriers(); track courier.id) {
+        <div class="record-row"><span><strong>{{ courier.fullName }}</strong><small>{{ courier.email }} - {{ courier.vehicleType }} - {{ courier.status }}</small></span><div><button mat-button type="button" (click)="page.approveCourier(courier.id)">Disponivel</button><button mat-button type="button" (click)="page.rejectCourier(courier.id)">Reprovar</button></div></div>
+      } @empty {
+        <div class="row-line"><strong>Sem entregadores</strong><span>Nenhum registro retornado.</span></div>
+      }
+    </div>
+  </section>
+</section>

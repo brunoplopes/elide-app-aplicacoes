@@ -1,0 +1,44 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Administracao" title="Dashboard" description="Visao executiva da operacao ELIDE em tempo real." />
+
+  @if (page.message()) {
+    <p class="api-message">{{ page.message() }}</p>
+  }
+
+  <div class="metric-grid">
+    @for (metric of page.metrics(); track metric.label) {
+      <elide-metric-card [label]="metric.label" [value]="metric.value" [icon]="metric.icon" />
+    }
+  </div>
+
+  <div class="tab-panel">
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Status dos pedidos</h2>
+        <button mat-button type="button" (click)="page.load()">Atualizar</button>
+      </div>
+      <div class="chip-row">
+        @for (item of page.dashboard().ordersByStatus; track item.label) {
+          <mat-chip>{{ item.label }}: {{ item.value }}</mat-chip>
+        } @empty {
+          <mat-chip>Nenhum status retornado</mat-chip>
+        }
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Pedidos recentes</h2>
+      <div class="list-grid">
+        @for (order of page.orders().slice(0, 12); track order.id) {
+          <article class="item-card">
+            <strong>{{ page.shortId(order.id) }}</strong>
+            <span>{{ order.storeName }} - {{ order.customerName }}</span>
+            <small>{{ order.status }} - {{ page.money(order.total) }}</small>
+          </article>
+        } @empty {
+          <article class="item-card"><strong>Nenhum pedido</strong><span>A API ainda nao retornou pedidos.</span></article>
+        }
+      </div>
+    </section>
+  </div>
+</section>

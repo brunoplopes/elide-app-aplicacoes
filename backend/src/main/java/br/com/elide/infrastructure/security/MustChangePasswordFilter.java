@@ -40,8 +40,11 @@ public class MustChangePasswordFilter extends OncePerRequestFilter {
     private boolean isAllowed(HttpServletRequest request) {
         var path = request.getRequestURI();
         return HttpMethod.OPTIONS.matches(request.getMethod())
+            || (HttpMethod.GET.matches(request.getMethod()) && path.startsWith("/api/v1/catalog/"))
             || path.equals("/api/v1/auth/change-password")
             || path.equals("/api/v1/auth/login")
+            || path.equals("/api/v1/auth/register")
+            || path.equals("/api/v1/auth/forgot-password")
             || path.startsWith("/actuator/health");
     }
 }

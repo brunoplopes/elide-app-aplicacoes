@@ -1,0 +1,34 @@
+<section class="search-page">
+  <elide-client-heading eyebrow="Busca" title="Pesquisar" description="Encontre restaurantes, mercados, farmacias, padarias, lanchonetes, acougues, pet shops, produtos e categorias." />
+
+  <section class="panel">
+    <h2>Lojas</h2>
+    <div class="result-grid">
+      @for (store of page.stores().content; track store.id) {
+        <article class="result-card">
+          <strong>{{ store.name }}</strong>
+          <span>{{ store.segment }} - {{ store.open ? 'Aberta' : 'Fechada' }}</span>
+          <a mat-button [routerLink]="['/produto', store.id]">Ver produtos</a>
+        </article>
+      } @empty {
+        <article class="result-card"><strong>Nenhuma loja</strong><span>Tente outro termo.</span></article>
+      }
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Produtos e categorias</h2>
+    <div class="result-grid">
+      @for (product of page.products().content; track product.id) {
+        <article class="result-card">
+          <strong>{{ product.name }}</strong>
+          <span>{{ product.description }}</span>
+          <small>{{ page.money(product.price) }}</small>
+          <a mat-button [routerLink]="['/produto', product.storeId]">Ver loja</a>
+        </article>
+      } @empty {
+        <article class="result-card"><strong>Nenhum produto</strong><span>Produtos e categorias aparecem aqui.</span></article>
+      }
+    </div>
+  </section>
+</section>

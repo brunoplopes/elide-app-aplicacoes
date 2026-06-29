@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
@@ -19,6 +19,7 @@ import {
   CustomerSummary,
   CustomerTracking,
   CustomerWallet,
+  DeliveryQuoteResponse,
   OrderResponse,
   Page,
   Product,
@@ -142,11 +143,18 @@ export class CustomerApiService {
     return this.http.get<CustomerTracking>(`${API_URL}/customer/tracking${suffix}`);
   }
 
-  stores(): Observable<Page<Store>> {
+  stores(filters?: { segment?: string; q?: string; size?: number }): Observable<Page<Store>> {
     if (!this.isBrowser) {
       return of(emptyPage<Store>());
     }
-    return this.http.get<Page<Store>>(`${API_URL}/catalog/stores?size=12`);
+    let params = new HttpParams().set('size', String(filters?.size ?? 12));
+    if (filters?.segment) {
+      params = params.set('segment', filters.segment);
+    }
+    if (filters?.q) {
+      params = params.set('q', filters.q);
+    }
+    return this.http.get<Page<Store>>(`${API_URL}/catalog/stores`, { params });
   }
 
   products(storeId: string): Observable<Page<Product>> {
@@ -156,8 +164,31 @@ export class CustomerApiService {
     return this.http.get<Page<Product>>(`${API_URL}/catalog/stores/${storeId}/products?size=20`);
   }
 
+  searchProducts(q?: string): Observable<Page<Product>> {
+    if (!this.isBrowser) {
+      return of(emptyPage<Product>());
+    }
+    let params = new HttpParams().set('size', '20');
+    if (q) {
+      params = params.set('q', q);
+    }
+    return this.http.get<Page<Product>>(`${API_URL}/catalog/products`, { params });
+  }
+
   createOrder(payload: unknown): Observable<OrderResponse> {
     return this.http.post<OrderResponse>(`${API_URL}/orders`, payload);
+  }
+
+  deliveryQuote(payload: { storeId: string; addressId: string; subtotal: number }): Observable<DeliveryQuoteResponse> {
+    return this.http.post<DeliveryQuoteResponse>(`${API_URL}/orders/delivery-quote`, payload);
+  }
+
+  cancelOrder(orderId: string, reason?: string): Observable<OrderResponse> {
+    return this.http.patch<OrderResponse>(`${API_URL}/orders/${orderId}/cancel`, { reason });
+  }
+
+  requestRefund(orderId: string, reason?: string): Observable<OrderResponse> {
+    return this.http.post<OrderResponse>(`${API_URL}/orders/${orderId}/refund`, { reason });
   }
 
   myOrders(): Observable<OrderResponse[]> {

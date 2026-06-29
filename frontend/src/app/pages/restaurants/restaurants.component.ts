@@ -20,5 +20,5 @@ export class RestaurantsPageComponent {
 
   readonly title = 'Restaurantes';
   readonly subtitle = 'Pratos, lanches, pizzas e refeicoes completas com entrega rapida.';
-  readonly stores = toSignal(this.api.stores().pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
+  readonly stores = toSignal(this.api.stores({ segment: 'Restaurante' }).pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
 }

@@ -18,6 +18,7 @@ import br.com.elide.application.dto.CustomerDtos.CustomerTrackingResponse;
 import br.com.elide.application.dto.CustomerDtos.CustomerTrackingStep;
 import br.com.elide.application.dto.CustomerDtos.CustomerWalletEntryResponse;
 import br.com.elide.application.dto.CustomerDtos.CustomerWalletResponse;
+import br.com.elide.application.payment.PaymentGatewayRegistry;
 import br.com.elide.domain.model.Enums.OrderStatus;
 import br.com.elide.domain.model.Enums.PaymentMethod;
 import br.com.elide.domain.model.Enums.PaymentStatus;
@@ -69,6 +70,7 @@ public class CustomerService {
     private final PaymentRepository payments;
     private final RouteRepository routes;
     private final ReviewRepository reviews;
+    private final PaymentGatewayRegistry paymentGateways;
 
     public CustomerService(
         UserRepository users,
@@ -84,7 +86,8 @@ public class CustomerService {
         OrderRepository orders,
         PaymentRepository payments,
         RouteRepository routes,
-        ReviewRepository reviews
+        ReviewRepository reviews,
+        PaymentGatewayRegistry paymentGateways
     ) {
         this.users = users;
         this.customers = customers;
@@ -100,6 +103,7 @@ public class CustomerService {
         this.payments = payments;
         this.routes = routes;
         this.reviews = reviews;
+        this.paymentGateways = paymentGateways;
     }
 
     public CustomerProfileResponse profile() {
@@ -259,13 +263,14 @@ public class CustomerService {
     @Transactional
     public CustomerPixResponse generatePix(UUID orderId) {
         var order = ownedOrder(orderId);
+        var session = paymentGateways.gateway(PaymentMethod.PIX).createSession(order);
         var payment = payments.findByOrderIdAndDeletedAtIsNull(orderId).orElseGet(PaymentEntity::new);
         payment.setOrder(order);
-        payment.setAmount(order.getTotal());
+        payment.setAmount(session.amount());
         payment.setStatus(PaymentStatus.PENDING);
-        payment.setProvider("PIX");
+        payment.setProvider(session.provider());
         payments.save(payment);
-        return new CustomerPixResponse(order.getId(), order.getTotal(), "000201ELIDE" + order.getId().toString().replace("-", "") + "BR.GOV.BCB.PIX", Instant.now().plusSeconds(600));
+        return new CustomerPixResponse(order.getId(), order.getTotal(), session.code(), session.expiresAt());
     }
 
     public CustomerTrackingResponse tracking(UUID orderId) {

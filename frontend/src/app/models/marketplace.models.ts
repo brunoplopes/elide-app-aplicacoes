@@ -27,6 +27,7 @@ export interface Store {
 export interface Product {
   id: string;
   storeId?: string;
+  categoryId?: string;
   name: string;
   description: string;
   price: number;
@@ -207,6 +208,13 @@ export interface OrderResponse {
   deliveryFee: number;
   discount: number;
   total: number;
+}
+
+export interface DeliveryQuoteResponse {
+  deliveryFee: number;
+  distanceMeters: number;
+  etaMinutes: number;
+  provider: string;
 }
 
 export interface CustomerProfile {
@@ -526,6 +534,17 @@ export interface AdminUserUpdateRequest {
 export interface AdminApprovalRequest {
   status: string;
   reason?: string | null;
+}
+
+export interface AdminCourierRequest {
+  username: string;
+  email: string;
+  password: string;
+  fullName: string;
+  document: string;
+  vehicleType: string;
+  status: CourierStatus;
+  enabled: boolean;
 }
 
 export interface AdminUserResponse {

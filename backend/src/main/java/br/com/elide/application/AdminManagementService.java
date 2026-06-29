@@ -10,6 +10,7 @@ import br.com.elide.application.dto.AdminDtos.AdminCityRequest;
 import br.com.elide.application.dto.AdminDtos.AdminCityResponse;
 import br.com.elide.application.dto.AdminDtos.AdminCouponRequest;
 import br.com.elide.application.dto.AdminDtos.AdminCouponResponse;
+import br.com.elide.application.dto.AdminDtos.AdminCourierRequest;
 import br.com.elide.application.dto.AdminDtos.AdminCourierResponse;
 import br.com.elide.application.dto.AdminDtos.AdminFeeRequest;
 import br.com.elide.application.dto.AdminDtos.AdminFeeResponse;
@@ -168,6 +169,33 @@ public class AdminManagementService {
 
     public List<AdminCourierResponse> couriers() {
         return live(couriers.findAll()).stream().map(this::courier).toList();
+    }
+
+    @Transactional
+    public AdminCourierResponse createCourier(AdminCourierRequest request) {
+        if (users.existsByUsername(request.username())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (users.findByEmail(request.email()).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        var user = new UserEntity();
+        user.setUsername(request.username());
+        user.setEmail(request.email());
+        user.setFullName(request.fullName());
+        user.setPasswordHash(passwordEncoder.encode(request.password()));
+        user.setEnabled(request.enabled());
+        user.setMustChangePassword(true);
+        user.getRoles().add(roles.findByName(RoleName.COURIER).orElseThrow());
+        var savedUser = users.save(user);
+
+        var courier = new CourierEntity();
+        courier.setUser(savedUser);
+        courier.setDocument(request.document());
+        courier.setVehicleType(request.vehicleType());
+        courier.setStatus(request.status());
+        audit("CREATE", "COURIER:" + request.username());
+        return courier(couriers.save(courier));
     }
 
     @Transactional

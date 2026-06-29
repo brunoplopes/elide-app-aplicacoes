@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MATERIAL } from '../shared/page-kit';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { CartService } from '../../services/cart.service';
@@ -16,8 +17,18 @@ export class CheckoutPageComponent {
 
   readonly cart = inject(CartService);
   private readonly api = inject(CustomerApiService);
+  private readonly fb = inject(FormBuilder);
   readonly message = signal<string | null>(null);
   readonly loading = signal(false);
+  readonly form = this.fb.nonNullable.group({
+    couponCode: ['ELIDE10'],
+    paymentMethod: ['PIX'],
+    addressId: ['']
+  });
+
+  applyCoupon(): void {
+    this.cart.applyCoupon(this.form.controls.couponCode.value);
+  }
 
   finish(): void {
     const items = this.cart.items();
@@ -28,13 +39,16 @@ export class CheckoutPageComponent {
     }
     this.loading.set(true);
     this.message.set(null);
+    this.cart.applyCoupon(this.form.controls.couponCode.value);
     this.api.createOrder({
       storeId,
-      paymentMethod: 'PIX',
+      couponCode: this.cart.coupon(),
+      paymentMethod: this.form.controls.paymentMethod.value,
       items: items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
-        note: item.note ?? null
+        note: item.note ?? null,
+        addons: item.addons?.map((addon) => ({ addonId: addon.id, quantity: addon.quantity })) ?? []
       }))
     }).subscribe({
       next: (order) => {

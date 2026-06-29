@@ -1,0 +1,18 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Operacao" title="Visualizacao de todos os pedidos" description="Acompanhe pedidos de clientes, lojas, entregadores e pagamentos." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <div class="panel-heading"><h2>Pedidos</h2><button mat-button type="button" (click)="page.load()">Atualizar</button></div>
+    <div class="record-list">
+      @for (order of page.orders(); track order.id) {
+        <div class="record-row">
+          <span><strong>{{ page.shortId(order.id) }} - {{ order.status }}</strong><small>{{ order.storeName }} - {{ order.customerName }} - {{ order.courierName || 'Sem entregador' }} - {{ order.paymentMethod }}</small></span>
+          <div><mat-chip>{{ page.money(order.total) }}</mat-chip></div>
+        </div>
+      } @empty {
+        <div class="row-line"><strong>Sem pedidos</strong><span>Nenhum pedido retornado.</span></div>
+      }
+    </div>
+  </section>
+</section>

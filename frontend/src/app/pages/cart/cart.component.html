@@ -4,12 +4,21 @@
     @for (item of page.cart.items(); track item.product.id) {
       <div class="cart-row">
         <mat-icon>shopping_bag</mat-icon>
-        <div><strong>{{ item.product.name }}</strong><span>{{ item.quantity }} x {{ item.product.price | currency:'BRL' }}</span></div>
+        <div>
+          <strong>{{ item.product.name }}</strong>
+          <span>{{ item.quantity }} x {{ item.product.price | currency:'BRL' }}</span>
+          @if (item.note) { <small>{{ item.note }}</small> }
+        </div>
+        <div class="qty-actions">
+          <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity - 1)" aria-label="Diminuir"><mat-icon>remove</mat-icon></button>
+          <strong>{{ item.quantity }}</strong>
+          <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity + 1)" aria-label="Aumentar"><mat-icon>add</mat-icon></button>
+        </div>
         <button mat-icon-button type="button" (click)="page.cart.remove(item.product.id)" aria-label="Remover"><mat-icon>delete</mat-icon></button>
       </div>
     } @empty {
       <div class="cart-row">Seu carrinho esta vazio.</div>
     }
-    <footer><strong>Total {{ page.cart.total() | currency:'BRL' }}</strong><a mat-flat-button routerLink="/checkout">Checkout</a></footer>
+    <footer><div><span>Subtotal {{ page.cart.subtotal() | currency:'BRL' }}</span><strong>Total {{ page.cart.total() | currency:'BRL' }}</strong></div><a mat-flat-button routerLink="/checkout">Checkout</a></footer>
   </article>
 </section>

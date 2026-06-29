@@ -1,0 +1,15 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Seguranca" title="Logs" description="Registro operacional recente para suporte e rastreabilidade." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <h2>Logs recentes</h2>
+    <div class="audit-list">
+      @for (log of page.logs(); track log.id) {
+        <div><strong>{{ log.action }}</strong><span>{{ log.resource }} - {{ log.ipAddress }}</span><small>{{ log.createdAt | date:'short' }}</small></div>
+      } @empty {
+        <div><strong>Sem logs</strong><span>Eventos administrativos aparecem aqui.</span></div>
+      }
+    </div>
+  </section>
+</section>

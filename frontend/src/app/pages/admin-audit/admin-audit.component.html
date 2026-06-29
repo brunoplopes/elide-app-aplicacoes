@@ -1,0 +1,15 @@
+<section class="admin-page">
+  <elide-client-heading eyebrow="Seguranca" title="Auditoria" description="Trilha de acoes administrativas e recursos alterados." />
+  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+
+  <section class="panel">
+    <h2>Eventos de auditoria</h2>
+    <div class="audit-list">
+      @for (log of page.audit(); track log.id) {
+        <div><strong>{{ log.action }}</strong><span>{{ log.resource }} - {{ log.actorUsername }}</span><small>{{ log.createdAt | date:'short' }}</small></div>
+      } @empty {
+        <div><strong>Sem auditoria</strong><span>Acoes administrativas aparecem aqui.</span></div>
+      }
+    </div>
+  </section>
+</section>

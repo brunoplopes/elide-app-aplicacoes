@@ -34,14 +34,48 @@ public class CatalogService {
             .toList();
     }
 
-    public Page<StoreResponse> stores(Pageable pageable) {
-        return stores.findByStatusAndDeletedAtIsNull(StoreStatus.APPROVED, pageable)
+    public Page<StoreResponse> stores(String segment, String query, Pageable pageable) {
+        var cleanSegment = normalize(segment);
+        var cleanQuery = normalize(query);
+        return storePage(cleanSegment, cleanQuery, pageable)
             .map(store -> new StoreResponse(store.getId(), store.getName(), store.getSegment(), store.getDeliveryFee(), store.getMinimumOrder(), store.isOpen()));
     }
 
     public Page<ProductResponse> products(UUID storeId, Pageable pageable) {
         return products.findByStoreIdAndActiveTrue(storeId, pageable)
-            .map(product -> new ProductResponse(product.getId(), product.getName(), product.getDescription(), product.getPrice(), product.getStockQuantity()));
+            .map(this::product);
+    }
+
+    public Page<ProductResponse> searchProducts(String query, Pageable pageable) {
+        var cleanQuery = normalize(query);
+        var page = cleanQuery == null
+            ? products.findActiveApproved(StoreStatus.APPROVED, pageable)
+            : products.searchActiveByQuery(StoreStatus.APPROVED, cleanQuery, pageable);
+        return page.map(this::product);
+    }
+
+    public ProductResponse product(UUID productId) {
+        return product(products.findById(productId).orElseThrow());
+    }
+
+    private ProductResponse product(br.com.elide.infrastructure.persistence.ProductEntity product) {
+        return new ProductResponse(product.getId(), product.getStore().getId(), product.getCategory().getId(), product.getName(), product.getDescription(), product.getPrice(), product.getStockQuantity());
+    }
+
+    private String normalize(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private Page<br.com.elide.infrastructure.persistence.StoreEntity> storePage(String segment, String query, Pageable pageable) {
+        if (segment != null && query != null) {
+            return stores.searchApprovedBySegmentAndQuery(StoreStatus.APPROVED, segment, query, pageable);
+        }
+        if (segment != null) {
+            return stores.searchApprovedBySegment(StoreStatus.APPROVED, segment, pageable);
+        }
+        if (query != null) {
+            return stores.searchApprovedByQuery(StoreStatus.APPROVED, query, pageable);
+        }
+        return stores.findByStatusAndDeletedAtIsNull(StoreStatus.APPROVED, pageable);
     }
 }
-
