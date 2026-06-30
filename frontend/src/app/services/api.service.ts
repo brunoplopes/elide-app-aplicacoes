@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { AuthResponse, Category, Dashboard, Page, Product, Store } from '../models/marketplace.models';
+import { AuthResponse, CatalogSearchResponse, Category, Dashboard, Page, Product, Store } from '../models/marketplace.models';
 
 const API_URL = 'http://localhost:8080/api/v1';
 const emptyPage = <T>(): Page<T> => ({ content: [], totalElements: 0, totalPages: 0, number: 0 });
@@ -73,6 +73,17 @@ export class ApiService {
       params = params.set('q', q);
     }
     return this.http.get<Page<Product>>(`${API_URL}/catalog/products`, { params });
+  }
+
+  searchCatalog(q?: string, size = 20): Observable<CatalogSearchResponse> {
+    if (!this.isBrowser) {
+      return of({ stores: emptyPage<Store>(), products: emptyPage<Product>(), categories: [] });
+    }
+    let params = new HttpParams().set('size', String(size));
+    if (q) {
+      params = params.set('q', q);
+    }
+    return this.http.get<CatalogSearchResponse>(`${API_URL}/catalog/search`, { params });
   }
 
   dashboard(): Observable<Dashboard> {

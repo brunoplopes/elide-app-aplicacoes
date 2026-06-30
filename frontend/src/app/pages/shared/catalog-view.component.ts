@@ -44,10 +44,10 @@ const emptyStores: Page<Store> = { content: [], totalElements: 0, totalPages: 0,
     </section>
   `,
   styles: [`
-    .page-wrap { max-width: 1180px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+    .page-wrap { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; overflow-x: clip; padding: 2.5rem 0 4rem; }
     .catalog-hero { border-radius: 8px; background: linear-gradient(135deg, rgba(255,107,0,.14), rgba(255,184,77,.16)); padding: clamp(1.5rem, 4vw, 3rem); }
     .catalog-hero span { color: var(--elide-orange); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-    .catalog-hero h1 { margin: .5rem 0; font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 900; letter-spacing: 0; }
+    .catalog-hero h1 { margin: .5rem 0; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; letter-spacing: 0; overflow-wrap: anywhere; }
     .catalog-hero p { max-width: 40rem; color: var(--elide-muted); }
     .search-box { margin-top: 1.5rem; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .75rem; max-width: 720px; border-radius: 999px; background: white; padding: .45rem .45rem .45rem 1rem; box-shadow: var(--elide-shadow-card); }
     .search-box input { min-width: 0; border: 0; outline: 0; color: var(--elide-ink); }
@@ -57,7 +57,7 @@ const emptyStores: Page<Store> = { content: [], totalElements: 0, totalPages: 0,
     .store-card { transition: transform .18s ease, box-shadow .18s ease; }
     .store-card:hover { transform: translateY(-3px); box-shadow: var(--elide-shadow-elegant); }
     .store-image { aspect-ratio: 16 / 9; background-image: linear-gradient(to right, rgba(30,30,30,.45), rgba(30,30,30,.05)), url('https://elide-fast-delivery.lovable.app/assets/hero-delivery-jH3Y-QwP.jpg'); background-position: center; background-size: cover; }
-    .store-body { display: grid; gap: .75rem; padding: 1rem; }
+    .store-body { display: grid; gap: .75rem; min-width: 0; padding: 1rem; overflow-wrap: anywhere; }
     h2 { margin: 0; font-size: 1.1rem; font-weight: 850; }
     p { margin: 0; }
     .meta, .store-body p { color: var(--elide-muted); font-size: .9rem; }
@@ -65,7 +65,7 @@ const emptyStores: Page<Store> = { content: [], totalElements: 0, totalPages: 0,
     .actions { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
     .actions a { border-radius: 999px !important; background: var(--elide-orange) !important; color: white !important; }
     .empty-card { padding: 1.25rem; color: var(--elide-muted); }
-    @media (max-width: 640px) { .search-box { grid-template-columns: auto 1fr; border-radius: 8px; } .search-box a { grid-column: 1 / -1; } }
+    @media (max-width: 640px) { .page-wrap { width: min(100% - 1rem, 1180px); padding: 1.5rem 0 2.5rem; } .search-box { grid-template-columns: auto 1fr; border-radius: 8px; } .search-box a { grid-column: 1 / -1; width: 100%; } }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

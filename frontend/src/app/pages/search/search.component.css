@@ -2,8 +2,10 @@
 .search-page { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 4rem; }
 .panel { margin-top: 1rem; border: 1px solid var(--elide-border); border-radius: 8px; background: var(--elide-card); padding: 1rem; box-shadow: var(--elide-shadow-card); }
 .panel h2 { margin: 0 0 1rem; font-size: 1.1rem; }
-.result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .85rem; }
+.result-grid, .chip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .85rem; }
 .result-card { display: grid; gap: .35rem; border: 1px solid var(--elide-border); border-radius: 8px; padding: .9rem; background: #fff; }
 .result-card span, .result-card small { color: var(--elide-muted); }
 .result-card a { justify-self: start; color: var(--elide-orange) !important; font-weight: 900; }
+.category-chip { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid var(--elide-border); border-radius: 999px; background: #fff; color: var(--elide-ink); padding: .75rem .9rem; text-decoration: none; font-weight: 900; }
+.category-chip mat-icon { color: var(--elide-orange); }
 @media (max-width: 620px) { .search-page { width: min(100% - 1rem, 1180px); } }

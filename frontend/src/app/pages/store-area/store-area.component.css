@@ -5,11 +5,13 @@
 .store-page {
   display: grid;
   gap: 1.35rem;
+  overflow-x: clip;
 }
 
 .store-alert {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: .7rem;
   border: 1px solid rgba(255, 107, 0, .24);
   border-radius: 8px;
@@ -99,6 +101,7 @@
 .task-card,
 .order-card,
 .table-panel {
+  min-width: 0;
   border: 1px solid var(--elide-border);
   border-radius: 8px;
   background: #fff;
@@ -178,7 +181,15 @@
   display: grid;
   grid-template-columns: auto 1fr;
   gap: .9rem;
+  min-width: 0;
   padding: 1rem;
+}
+
+.task-card > div,
+.order-card > *,
+.table-row > *,
+.table-panel header > * {
+  min-width: 0;
 }
 
 .task-card mat-icon {
@@ -215,7 +226,8 @@
 .table-panel {
   display: grid;
   margin: 0 1rem 1rem;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .inline-panel {
@@ -267,6 +279,15 @@
 .table-row span:first-child {
   display: grid;
   gap: .2rem;
+}
+
+.hero-panel,
+.compact-panel,
+.task-card,
+.order-card,
+.table-row,
+.empty-row {
+  overflow-wrap: anywhere;
 }
 
 .order-card {
@@ -365,6 +386,11 @@
 
   .task-card {
     grid-template-columns: 1fr;
+  }
+
+  .store-alert button {
+    width: 100%;
+    margin-left: 0;
   }
 
   .order-card footer {

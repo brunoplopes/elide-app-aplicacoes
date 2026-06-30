@@ -17,17 +17,34 @@
   </section>
 
   <section class="panel">
-    <h2>Produtos e categorias</h2>
+    <h2>Categorias</h2>
+    <div class="chip-grid">
+      @for (category of page.categories(); track category.id) {
+        <a class="category-chip" [routerLink]="['/busca']" [queryParams]="{ q: category.name }">
+          <mat-icon>{{ category.icon }}</mat-icon>
+          <span>{{ category.name }}</span>
+        </a>
+      } @empty {
+        <article class="result-card"><strong>Nenhuma categoria</strong><span>Categorias relacionadas aparecem aqui.</span></article>
+      }
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Produtos</h2>
     <div class="result-grid">
       @for (product of page.products().content; track product.id) {
         <article class="result-card">
           <strong>{{ product.name }}</strong>
           <span>{{ product.description }}</span>
           <small>{{ page.money(product.price) }}</small>
+          @if (product.addons?.length) {
+            <small>{{ product.addons?.length }} adicional(is) disponiveis</small>
+          }
           <a mat-button [routerLink]="['/produto', product.storeId]">Ver loja</a>
         </article>
       } @empty {
-        <article class="result-card"><strong>Nenhum produto</strong><span>Produtos e categorias aparecem aqui.</span></article>
+        <article class="result-card"><strong>Nenhum produto</strong><span>Produtos aparecem aqui.</span></article>
       }
     </div>
   </section>

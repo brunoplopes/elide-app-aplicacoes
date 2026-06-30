@@ -5,7 +5,21 @@
       <article class="product-card">
         <h2>{{ product.name }}</h2>
         <p>{{ product.description }}</p>
-        <div><strong>{{ product.price | currency:'BRL' }}</strong><button mat-flat-button type="button" (click)="page.add(product)">Adicionar</button></div>
+        @if (product.addons?.length) {
+          <div class="addon-list">
+            @for (addon of product.addons; track addon.id) {
+              <button class="addon-chip" type="button" (click)="page.addAddon(product, addon)">
+                <span>{{ addon.name }}</span>
+                <small>{{ addon.price | currency:'BRL' }}</small>
+              </button>
+            }
+          </div>
+        }
+        <label class="note-field">
+          <span>Observacao do item</span>
+          <textarea #note rows="2" placeholder="Ex.: sem cebola, ponto da carne, trocar molho"></textarea>
+        </label>
+        <div class="product-actions"><strong>{{ product.price | currency:'BRL' }}</strong><button mat-flat-button type="button" (click)="page.add(product, note.value)">Adicionar</button></div>
       </article>
     } @empty {
       <article class="product-card">Selecione uma loja para ver produtos.</article>

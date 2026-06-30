@@ -7,6 +7,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,10 +20,19 @@ public final class MarketplaceDtos {
     public record CategoryResponse(UUID id, String name, String icon) {
     }
 
-    public record StoreResponse(UUID id, String name, String segment, BigDecimal deliveryFee, BigDecimal minimumOrder, boolean open) {
+    public record StoreResponse(UUID id, String name, String segment, BigDecimal deliveryFee, BigDecimal minimumOrder, boolean open, BigDecimal latitude, BigDecimal longitude) {
     }
 
-    public record ProductResponse(UUID id, UUID storeId, UUID categoryId, String name, String description, BigDecimal price, int stockQuantity) {
+    public record StoreNearbyResponse(UUID id, String name, String segment, BigDecimal deliveryFee, BigDecimal minimumOrder, boolean open, BigDecimal latitude, BigDecimal longitude, BigDecimal distanceMeters) {
+    }
+
+    public record ProductAddonResponse(UUID id, String name, BigDecimal price, boolean required, int maxQuantity) {
+    }
+
+    public record ProductResponse(UUID id, UUID storeId, UUID categoryId, String name, String description, BigDecimal price, int stockQuantity, List<ProductAddonResponse> addons) {
+    }
+
+    public record CatalogSearchResponse(Page<StoreResponse> stores, Page<ProductResponse> products, List<CategoryResponse> categories) {
     }
 
     public record CreateOrderRequest(
@@ -40,7 +50,13 @@ public final class MarketplaceDtos {
     public record OrderItemAddonRequest(@NotNull UUID addonId, @Min(1) int quantity) {
     }
 
-    public record OrderResponse(UUID id, OrderStatus status, BigDecimal subtotal, BigDecimal deliveryFee, BigDecimal discount, BigDecimal total) {
+    public record OrderItemAddonResponse(UUID addonId, String name, int quantity, BigDecimal unitPrice, BigDecimal total) {
+    }
+
+    public record OrderItemResponse(UUID productId, String productName, int quantity, BigDecimal unitPrice, BigDecimal total, String note, List<OrderItemAddonResponse> addons) {
+    }
+
+    public record OrderResponse(UUID id, OrderStatus status, BigDecimal subtotal, BigDecimal deliveryFee, BigDecimal discount, BigDecimal total, List<OrderItemResponse> items) {
     }
 
     public record OrderActionRequest(String reason) {

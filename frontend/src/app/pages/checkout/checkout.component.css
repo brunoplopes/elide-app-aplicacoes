@@ -1,8 +1,8 @@
 :host { display: block; }
-.checkout-grid { display: grid; grid-template-columns: 1fr 360px; gap: 1rem; }
-.panel-card:not(.elide-form-card) { border: 1px solid var(--elide-border); border-radius: 8px; background: var(--elide-card); padding: 1.5rem; box-shadow: var(--elide-shadow-card); }
+.checkout-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); gap: 1rem; }
+.panel-card:not(.elide-form-card) { min-width: 0; border: 1px solid var(--elide-border); border-radius: 8px; background: var(--elide-card); padding: 1.5rem; box-shadow: var(--elide-shadow-card); overflow-wrap: anywhere; }
 .form-panel { display: grid; gap: 1rem; }
-.pix-box { display: flex; gap: 1rem; border-radius: 8px; background: rgba(255,107,0,.08); padding: 1rem; }
+.pix-box { display: flex; min-width: 0; gap: 1rem; border-radius: 8px; background: rgba(255,107,0,.08); padding: 1rem; overflow-wrap: anywhere; }
 .pix-box mat-icon { color: var(--elide-orange); }
 .pix-box span { display: block; color: var(--elide-muted); }
 .summary { display: grid; gap: 1rem; align-content: start; }

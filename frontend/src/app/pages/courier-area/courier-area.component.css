@@ -5,6 +5,7 @@
 .courier-page {
   width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
+  overflow-x: clip;
   padding: 1.4rem 0 3rem;
 }
 
@@ -23,6 +24,7 @@
 
 .panel,
 .ride-card {
+  min-width: 0;
   border: 1px solid rgba(24, 24, 27, 0.08);
   border-radius: 20px;
   background: #fff;
@@ -37,7 +39,12 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  min-width: 0;
   margin-bottom: 1rem;
+}
+
+.panel-title > div {
+  min-width: 0;
 }
 
 .panel-title > mat-icon {
@@ -193,6 +200,7 @@
   display: grid;
   gap: 0.65rem;
   padding: 0.9rem;
+  overflow-wrap: anywhere;
 }
 
 .ride-card strong,
@@ -227,9 +235,19 @@
   grid-template-columns: auto minmax(110px, 1fr) minmax(130px, 1fr) auto;
   align-items: center;
   gap: 0.65rem;
+  min-width: 0;
   padding: 0.75rem;
   border-radius: 14px;
   background: #fafafa;
+}
+
+.statement-list > div > *,
+.history-list > div > *,
+.profile-lines span,
+.mini-list span,
+.map-meta {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .history-list mat-icon {

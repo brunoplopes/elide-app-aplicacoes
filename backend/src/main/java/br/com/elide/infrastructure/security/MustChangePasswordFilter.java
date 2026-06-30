@@ -41,6 +41,7 @@ public class MustChangePasswordFilter extends OncePerRequestFilter {
         var path = request.getRequestURI();
         return HttpMethod.OPTIONS.matches(request.getMethod())
             || (HttpMethod.GET.matches(request.getMethod()) && path.startsWith("/api/v1/catalog/"))
+            || (HttpMethod.GET.matches(request.getMethod()) && (path.equals("/api/v1/stores/nearby") || path.equals("/stores/nearby")))
             || path.equals("/api/v1/auth/change-password")
             || path.equals("/api/v1/auth/login")
             || path.equals("/api/v1/auth/register")

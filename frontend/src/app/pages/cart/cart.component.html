@@ -7,7 +7,22 @@
         <div>
           <strong>{{ item.product.name }}</strong>
           <span>{{ item.quantity }} x {{ item.product.price | currency:'BRL' }}</span>
-          @if (item.note) { <small>{{ item.note }}</small> }
+          @if (item.addons?.length) {
+            <div class="cart-addons">
+              @for (addon of item.addons; track addon.id) {
+                <span>
+                  {{ addon.name }} +{{ addon.price | currency:'BRL' }}
+                  <button mat-icon-button type="button" (click)="page.cart.setAddonQuantity(item.product.id, addon.id, addon.quantity - 1)" aria-label="Diminuir adicional"><mat-icon>remove</mat-icon></button>
+                  <b>{{ addon.quantity }}</b>
+                  <button mat-icon-button type="button" (click)="page.cart.setAddonQuantity(item.product.id, addon.id, addon.quantity + 1)" aria-label="Aumentar adicional"><mat-icon>add</mat-icon></button>
+                </span>
+              }
+            </div>
+          }
+          <label class="cart-note">
+            <span>Observacao</span>
+            <input [value]="item.note ?? ''" placeholder="Ex.: sem cebola" (change)="page.cart.setNote(item.product.id, $any($event.target).value)">
+          </label>
         </div>
         <div class="qty-actions">
           <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity - 1)" aria-label="Diminuir"><mat-icon>remove</mat-icon></button>
@@ -19,6 +34,6 @@
     } @empty {
       <div class="cart-row">Seu carrinho esta vazio.</div>
     }
-    <footer><div><span>Subtotal {{ page.cart.subtotal() | currency:'BRL' }}</span><strong>Total {{ page.cart.total() | currency:'BRL' }}</strong></div><a mat-flat-button routerLink="/checkout">Checkout</a></footer>
+    <footer><div><span>Subtotal {{ page.cart.subtotal() | currency:'BRL' }}</span><span>Frete {{ page.cart.deliveryFee() | currency:'BRL' }}</span><span>Desconto - {{ page.cart.discount() | currency:'BRL' }}</span><strong>Total {{ page.cart.total() | currency:'BRL' }}</strong></div><a mat-flat-button routerLink="/checkout">Checkout</a></footer>
   </article>
 </section>

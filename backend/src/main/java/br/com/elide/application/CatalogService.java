@@ -1,10 +1,13 @@
 package br.com.elide.application;
 
+import br.com.elide.application.dto.MarketplaceDtos.CatalogSearchResponse;
 import br.com.elide.application.dto.MarketplaceDtos.CategoryResponse;
+import br.com.elide.application.dto.MarketplaceDtos.ProductAddonResponse;
 import br.com.elide.application.dto.MarketplaceDtos.ProductResponse;
 import br.com.elide.application.dto.MarketplaceDtos.StoreResponse;
 import br.com.elide.domain.model.Enums.StoreStatus;
 import br.com.elide.infrastructure.persistence.repository.CategoryRepository;
+import br.com.elide.infrastructure.persistence.repository.ProductAddonRepository;
 import br.com.elide.infrastructure.persistence.repository.ProductRepository;
 import br.com.elide.infrastructure.persistence.repository.StoreRepository;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,11 +23,13 @@ public class CatalogService {
     private final CategoryRepository categories;
     private final StoreRepository stores;
     private final ProductRepository products;
+    private final ProductAddonRepository addons;
 
-    public CatalogService(CategoryRepository categories, StoreRepository stores, ProductRepository products) {
+    public CatalogService(CategoryRepository categories, StoreRepository stores, ProductRepository products, ProductAddonRepository addons) {
         this.categories = categories;
         this.stores = stores;
         this.products = products;
+        this.addons = addons;
     }
 
     @Cacheable("categories")
@@ -38,7 +43,7 @@ public class CatalogService {
         var cleanSegment = normalize(segment);
         var cleanQuery = normalize(query);
         return storePage(cleanSegment, cleanQuery, pageable)
-            .map(store -> new StoreResponse(store.getId(), store.getName(), store.getSegment(), store.getDeliveryFee(), store.getMinimumOrder(), store.isOpen()));
+            .map(this::store);
     }
 
     public Page<ProductResponse> products(UUID storeId, Pageable pageable) {
@@ -54,12 +59,45 @@ public class CatalogService {
         return page.map(this::product);
     }
 
+    public CatalogSearchResponse search(String query, Pageable pageable) {
+        var cleanQuery = normalize(query);
+        var categoryResults = cleanQuery == null
+            ? categories.findByActiveTrueOrderByNameAsc()
+            : categories.findTop20ByActiveTrueAndNameContainingIgnoreCaseOrderByNameAsc(cleanQuery);
+        return new CatalogSearchResponse(
+            stores(null, cleanQuery, pageable),
+            searchProducts(cleanQuery, pageable),
+            categoryResults.stream().map(this::category).toList()
+        );
+    }
+
     public ProductResponse product(UUID productId) {
         return product(products.findById(productId).orElseThrow());
     }
 
+    private CategoryResponse category(br.com.elide.infrastructure.persistence.CategoryEntity category) {
+        return new CategoryResponse(category.getId(), category.getName(), category.getIcon());
+    }
+
     private ProductResponse product(br.com.elide.infrastructure.persistence.ProductEntity product) {
-        return new ProductResponse(product.getId(), product.getStore().getId(), product.getCategory().getId(), product.getName(), product.getDescription(), product.getPrice(), product.getStockQuantity());
+        return new ProductResponse(
+            product.getId(),
+            product.getStore().getId(),
+            product.getCategory().getId(),
+            product.getName(),
+            product.getDescription(),
+            product.getPrice(),
+            product.getStockQuantity(),
+            addons.findByProductIdAndDeletedAtIsNullOrderByNameAsc(product.getId()).stream().map(this::addon).toList()
+        );
+    }
+
+    private ProductAddonResponse addon(br.com.elide.infrastructure.persistence.ProductAddonEntity addon) {
+        return new ProductAddonResponse(addon.getId(), addon.getName(), addon.getPrice(), addon.isRequired(), addon.getMaxQuantity());
+    }
+
+    private StoreResponse store(br.com.elide.infrastructure.persistence.StoreEntity store) {
+        return new StoreResponse(store.getId(), store.getName(), store.getSegment(), store.getDeliveryFee(), store.getMinimumOrder(), store.isOpen(), store.getLatitude(), store.getLongitude());
     }
 
     private String normalize(String value) {

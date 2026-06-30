@@ -13,6 +13,7 @@ export interface CartAddon {
   name: string;
   price: number;
   quantity: number;
+  maxQuantity?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -46,7 +47,7 @@ export class CartService {
   }
 
   setNote(productId: string, note: string): void {
-    this.itemsSignal.update((items) => items.map((item) => item.product.id === productId ? { ...item, note } : item));
+    this.itemsSignal.update((items) => items.map((item) => item.product.id === productId ? { ...item, note: note.trim() || undefined } : item));
   }
 
   addAddon(productId: string, addon: CartAddon): void {
@@ -56,13 +57,30 @@ export class CartService {
       }
       const addons = item.addons ?? [];
       const existing = addons.find((current) => current.id === addon.id);
+      const maxQuantity = addon.maxQuantity ?? existing?.maxQuantity ?? Number.MAX_SAFE_INTEGER;
       return {
         ...item,
         addons: existing
-          ? addons.map((current) => current.id === addon.id ? { ...current, quantity: current.quantity + addon.quantity } : current)
-          : [...addons, addon]
+          ? addons.map((current) => current.id === addon.id ? { ...current, quantity: Math.min(maxQuantity, current.quantity + addon.quantity), maxQuantity } : current)
+          : [...addons, { ...addon, quantity: Math.min(maxQuantity, addon.quantity), maxQuantity }]
       };
     }));
+  }
+
+  setAddonQuantity(productId: string, addonId: string, quantity: number): void {
+    this.itemsSignal.update((items) => items.map((item) => {
+      if (item.product.id !== productId) {
+        return item;
+      }
+      const addons = (item.addons ?? [])
+        .map((addon) => addon.id === addonId ? { ...addon, quantity: Math.min(addon.maxQuantity ?? Number.MAX_SAFE_INTEGER, quantity) } : addon)
+        .filter((addon) => addon.quantity > 0);
+      return { ...item, addons };
+    }));
+  }
+
+  removeAddon(productId: string, addonId: string): void {
+    this.setAddonQuantity(productId, addonId, 0);
   }
 
   applyCoupon(code: string): void {

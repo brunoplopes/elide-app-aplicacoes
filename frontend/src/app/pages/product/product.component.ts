@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { CartService } from '../../services/cart.service';
-import { Page, Product } from '../../models/marketplace.models';
+import { Page, Product, ProductAddon } from '../../models/marketplace.models';
 
 const emptyProducts: Page<Product> = { content: [], totalElements: 0, totalPages: 0, number: 0 };
 
@@ -31,7 +31,21 @@ export class ProductPageComponent {
     { initialValue: emptyProducts }
   );
 
-  add(product: Product): void {
-    this.cart.add({ ...product, storeId: this.route.snapshot.paramMap.get('id') ?? undefined });
+  add(product: Product, note?: string): void {
+    this.cart.add({ ...product, storeId: this.route.snapshot.paramMap.get('id') ?? undefined }, note);
+  }
+
+  addAddon(product: Product, addon: ProductAddon): void {
+    const productWithStore = { ...product, storeId: this.route.snapshot.paramMap.get('id') ?? undefined };
+    if (!this.cart.items().some((item) => item.product.id === product.id)) {
+      this.cart.add(productWithStore);
+    }
+    this.cart.addAddon(product.id, {
+      id: addon.id,
+      name: addon.name,
+      price: addon.price,
+      quantity: 1,
+      maxQuantity: addon.maxQuantity
+    });
   }
 }

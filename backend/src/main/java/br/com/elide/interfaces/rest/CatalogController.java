@@ -1,6 +1,7 @@
 package br.com.elide.interfaces.rest;
 
 import br.com.elide.application.CatalogService;
+import br.com.elide.application.dto.MarketplaceDtos.CatalogSearchResponse;
 import br.com.elide.application.dto.MarketplaceDtos.CategoryResponse;
 import br.com.elide.application.dto.MarketplaceDtos.ProductResponse;
 import br.com.elide.application.dto.MarketplaceDtos.StoreResponse;
@@ -42,6 +43,11 @@ public class CatalogController {
     @GetMapping("/products")
     public Page<ProductResponse> searchProducts(@RequestParam(required = false) String q, Pageable pageable) {
         return catalogService.searchProducts(q, pageable);
+    }
+
+    @GetMapping("/search")
+    public CatalogSearchResponse search(@RequestParam(required = false) String q, Pageable pageable) {
+        return catalogService.search(q, pageable);
     }
 
     @GetMapping("/products/{productId}")

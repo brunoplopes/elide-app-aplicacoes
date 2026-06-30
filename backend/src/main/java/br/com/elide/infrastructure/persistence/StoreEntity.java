@@ -40,6 +40,12 @@ public class StoreEntity extends BaseEntity {
     @Column(nullable = false)
     private boolean open = true;
 
+    @Column(precision = 10, scale = 7)
+    private BigDecimal latitude;
+
+    @Column(precision = 10, scale = 7)
+    private BigDecimal longitude;
+
     @ManyToOne
     @JoinColumn(name = "city_id")
     private CityEntity city;
@@ -48,4 +54,3 @@ public class StoreEntity extends BaseEntity {
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
 }
-

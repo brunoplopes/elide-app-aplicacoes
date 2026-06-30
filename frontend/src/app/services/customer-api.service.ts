@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import {
   CustomerAddress,
   CustomerAddressRequest,
+  CatalogSearchResponse,
   CustomerCardRequest,
   CustomerCashPreference,
   CustomerCoupon,
@@ -173,6 +174,17 @@ export class CustomerApiService {
       params = params.set('q', q);
     }
     return this.http.get<Page<Product>>(`${API_URL}/catalog/products`, { params });
+  }
+
+  searchCatalog(q?: string, size = 20): Observable<CatalogSearchResponse> {
+    if (!this.isBrowser) {
+      return of({ stores: emptyPage<Store>(), products: emptyPage<Product>(), categories: [] });
+    }
+    let params = new HttpParams().set('size', String(size));
+    if (q) {
+      params = params.set('q', q);
+    }
+    return this.http.get<CatalogSearchResponse>(`${API_URL}/catalog/search`, { params });
   }
 
   createOrder(payload: unknown): Observable<OrderResponse> {

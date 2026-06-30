@@ -22,6 +22,9 @@ export interface Store {
   deliveryFee: number;
   minimumOrder: number;
   open: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+  distanceMeters?: number | null;
 }
 
 export interface Product {
@@ -32,6 +35,21 @@ export interface Product {
   description: string;
   price: number;
   stockQuantity: number;
+  addons?: ProductAddon[];
+}
+
+export interface ProductAddon {
+  id: string;
+  name: string;
+  price: number;
+  required: boolean;
+  maxQuantity: number;
+}
+
+export interface CatalogSearchResponse {
+  stores: Page<Store>;
+  products: Page<Product>;
+  categories: Category[];
 }
 
 export interface Dashboard {
@@ -50,7 +68,7 @@ export interface Page<T> {
   number: number;
 }
 
-export type StoreStatus = 'PENDING_DOCUMENTS' | 'PENDING_APPROVAL' | 'APPROVED' | 'SUSPENDED' | 'REJECTED';
+export type StoreStatus = 'PENDING_DOCUMENTS' | 'PENDING_APPROVAL' | 'APPROVED' | 'ACTIVE' | 'SUSPENDED' | 'REJECTED';
 export type OrderStatus = 'CREATED' | 'ACCEPTED' | 'PREPARING' | 'READY_FOR_PICKUP' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED' | 'REFUND_REQUESTED' | 'REFUNDED';
 
 export interface StoreProfileRequest {
@@ -207,6 +225,25 @@ export interface OrderResponse {
   subtotal: number;
   deliveryFee: number;
   discount: number;
+  total: number;
+  items?: OrderItemResponse[];
+}
+
+export interface OrderItemResponse {
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  note?: string | null;
+  addons: OrderItemAddonResponse[];
+}
+
+export interface OrderItemAddonResponse {
+  addonId: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
   total: number;
 }
 

@@ -173,6 +173,7 @@ type MenuGroup = {
     :host {
       display: flex;
       min-height: 100vh;
+      overflow-x: clip;
       flex-direction: column;
     }
 
@@ -208,6 +209,7 @@ type MenuGroup = {
       display: flex;
       align-items: center;
       width: min(1180px, calc(100% - 2rem));
+      min-width: 0;
       min-height: 64px;
       margin: 0 auto;
       gap: 1rem;
@@ -220,7 +222,8 @@ type MenuGroup = {
     .brand-link {
       display: inline-flex;
       align-items: center;
-      min-width: max-content;
+      flex: 0 1 auto;
+      min-width: 0;
       gap: .6rem;
       color: var(--elide-ink);
       text-decoration: none;
@@ -257,6 +260,7 @@ type MenuGroup = {
       align-items: center;
       gap: .15rem;
       margin-left: auto;
+      min-width: 0;
     }
 
     .main-nav a,
@@ -278,7 +282,9 @@ type MenuGroup = {
     .header-actions {
       display: flex;
       align-items: center;
+      flex: 0 1 auto;
       gap: .35rem;
+      min-width: 0;
     }
 
     .login-pill {
@@ -319,7 +325,7 @@ type MenuGroup = {
     }
 
     .menu-button {
-      display: inline-grid;
+      display: none !important;
       color: var(--elide-ink) !important;
     }
 
@@ -331,6 +337,7 @@ type MenuGroup = {
       z-index: 70;
       display: block;
       width: min(276px, calc(100vw - 64px));
+      max-width: calc(100vw - 56px);
       max-height: none;
       overflow-y: auto;
       border-left: 1px solid rgba(30, 30, 30, .08);
@@ -340,6 +347,7 @@ type MenuGroup = {
       transform: translateX(100%);
       visibility: hidden;
       pointer-events: none;
+      contain: layout paint;
       transition: transform 220ms ease, visibility 0s linear 220ms, box-shadow 220ms ease;
     }
 
@@ -689,6 +697,10 @@ type MenuGroup = {
 
       .header-actions {
         margin-left: auto;
+      }
+
+      .menu-button {
+        display: inline-grid !important;
       }
 
       .footer-inner {

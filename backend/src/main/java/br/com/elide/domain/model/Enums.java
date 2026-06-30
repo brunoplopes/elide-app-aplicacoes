@@ -9,7 +9,7 @@ public final class Enums {
     }
 
     public enum StoreStatus {
-        PENDING_DOCUMENTS, PENDING_APPROVAL, APPROVED, SUSPENDED, REJECTED
+        PENDING_DOCUMENTS, PENDING_APPROVAL, APPROVED, ACTIVE, SUSPENDED, REJECTED
     }
 
     public enum CourierStatus {

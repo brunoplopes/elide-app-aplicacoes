@@ -25,6 +25,36 @@ Services:
 - PostgreSQL: localhost:5432
 - RabbitMQ UI: http://localhost:15672
 
+### PostGIS
+
+Store proximity search uses PostgreSQL + PostGIS. The local Docker Compose stack uses the `postgis/postgis:16-3.4-alpine` image so the extension files are available when Flyway runs:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis;
+```
+
+If you already had the old `postgres:16-alpine` container running, recreate only the database container before starting the backend again:
+
+```bash
+docker compose up -d postgres
+```
+
+For a PostgreSQL installed directly on your machine, install PostGIS in that PostgreSQL server first, then run the backend. The application cannot create the extension if the server does not have PostGIS installed.
+
+The application migrations add `stores.latitude`, `stores.longitude`, `stores.location`, keep `location` updated through a trigger, and create the spatial/index support for nearby searches.
+
+Nearby stores endpoint:
+
+```http
+GET /api/v1/stores/nearby?latitude=-23.5505&longitude=-46.6333&radiusMeters=5000&limit=50
+```
+
+Optional category filter:
+
+```http
+GET /api/v1/stores/nearby?latitude=-23.5505&longitude=-46.6333&radiusMeters=5000&limit=50&categoryId=<uuid>
+```
+
 Initial administrator:
 
 - User: `leonardo_admin`

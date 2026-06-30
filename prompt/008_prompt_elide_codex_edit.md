@@ -1,3 +1,7 @@
+Leia docs/PROMPT_MASTER.md.
+
+Execute apenas as próximas tarefas.
+
 Você é um engenheiro de software sênior. Altere minha aplicação para suportar busca eficiente de lojas próximas usando PostgreSQL + PostGIS.
 
 Contexto:
@@ -62,57 +66,57 @@ A query deve:
 
 Query base:
 
-SELECT
-s.id,
-s.name,
-s.segment,
-s.delivery_fee,
-s.minimum_order,
-s.open,
-ST_Distance(
-s.location,
-ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
-) AS distance_meters
-FROM stores s
-WHERE s.deleted_at IS NULL
-AND s.status = 'ACTIVE'
-AND s.open = true
-AND ST_DWithin(
-s.location,
-ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
-:radius_meters
-)
-ORDER BY
-s.location <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
-LIMIT :limit;
+    SELECT
+    s.id,
+    s.name,
+    s.segment,
+    s.delivery_fee,
+    s.minimum_order,
+    s.open,
+    ST_Distance(
+    s.location,
+    ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
+    ) AS distance_meters
+    FROM stores s
+    WHERE s.deleted_at IS NULL
+    AND s.status = 'ACTIVE'
+    AND s.open = true
+    AND ST_DWithin(
+    s.location,
+    ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
+    :radius_meters
+    )
+    ORDER BY
+    s.location <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
+    LIMIT :limit;
 
 8. Criar também uma busca opcional por categoria usando store_categories:
 
-SELECT
-s.id,
-s.name,
-s.segment,
-s.delivery_fee,
-s.minimum_order,
-s.open,
-ST_Distance(
-s.location,
-ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
-) AS distance_meters
-FROM stores s
-JOIN store_categories sc ON sc.store_id = s.id
-WHERE s.deleted_at IS NULL
-AND s.status = 'ACTIVE'
-AND s.open = true
-AND sc.category_id = :category_id
-AND ST_DWithin(
-s.location,
-ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
-:radius_meters
-)
-ORDER BY
-s.location <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
-LIMIT :limit;
+    SELECT
+    s.id,
+    s.name,
+    s.segment,
+    s.delivery_fee,
+    s.minimum_order,
+    s.open,
+    ST_Distance(
+    s.location,
+    ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
+    ) AS distance_meters
+    FROM stores s
+    JOIN store_categories sc ON sc.store_id = s.id
+    WHERE s.deleted_at IS NULL
+    AND s.status = 'ACTIVE'
+    AND s.open = true
+    AND sc.category_id = :category_id
+    AND ST_DWithin(
+    s.location,
+    ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
+    :radius_meters
+    )
+    ORDER BY
+    s.location <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
+    LIMIT :limit;
 
 9. Criar ou ajustar endpoint REST:
    GET /stores/nearby
