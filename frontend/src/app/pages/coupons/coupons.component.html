@@ -8,7 +8,10 @@
     [actionLink]="page.vm().actionLink ?? '/'"
   />
 
-  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+  <elide-customer-nav />
+
+  @if (page.loading()) { <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Buscando cupons...</span></div> }
+  @if (page.message()) { <p class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.message() }}</span></p> }
 
   @if (page.vm().metrics?.length) {
     <div class="metric-grid">
@@ -42,7 +45,7 @@
         </article>
       }
     </div>
-  } @else {
+  } @else if (!page.loading()) {
     <div class="action-grid"><article class="feature-card"><mat-icon>local_offer</mat-icon><strong>Nenhum cupom</strong><span>Cupons ativos retornados pela API aparecerem aqui.</span></article></div>
   }
 </section>

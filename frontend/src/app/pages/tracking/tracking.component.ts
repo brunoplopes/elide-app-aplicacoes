@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { CustomerTracking } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { MATERIAL } from '../shared/page-kit';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 
 @Component({
   selector: 'elide-tracking-page',
-  imports: [...MATERIAL, ClientHeadingComponent],
+  imports: [...MATERIAL, ClientHeadingComponent, CustomerNavComponent],
   templateUrl: './tracking.component.html',
   styleUrl: './tracking.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -17,6 +18,7 @@ export class TrackingPageComponent implements OnInit {
 
   readonly page = this;
   readonly tracking = signal<CustomerTracking | null>(null);
+  readonly loading = signal(true);
   readonly message = signal<string | null>(null);
 
   readonly fallbackSteps = [
@@ -27,10 +29,11 @@ export class TrackingPageComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.loading.set(true);
     this.api.tracking().pipe(catchError(() => {
       this.message.set('Endpoint /customer/tracking/latest ainda nao respondeu.');
       return of(null);
-    })).subscribe((tracking) => this.tracking.set(tracking));
+    }), finalize(() => this.loading.set(false))).subscribe((tracking) => this.tracking.set(tracking));
   }
 
   steps() {

@@ -20,7 +20,9 @@
         <strong>{{ page.form.controls.noChange.value ? 'R$ 0,00' : (page.change() | currency:'BRL') }}</strong>
       </div>
       @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
-      <button mat-flat-button type="button" (click)="page.save()" [disabled]="page.loading()">Confirmar dinheiro</button>
+      <button mat-flat-button type="button" (click)="page.save()" [disabled]="page.loading()">
+        {{ page.loading() ? 'Salvando...' : 'Confirmar dinheiro' }}
+      </button>
     </form>
 
     <aside class="cash-info">

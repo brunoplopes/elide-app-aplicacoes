@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MATERIAL } from '../shared/page-kit';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { CartService } from '../../services/cart.service';
@@ -7,7 +8,7 @@ import { CustomerApiService } from '../../services/customer-api.service';
 
 @Component({
   selector: 'elide-checkout-page',
-  imports: [...MATERIAL, ClientHeadingComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +21,13 @@ export class CheckoutPageComponent {
   private readonly fb = inject(FormBuilder);
   readonly message = signal<string | null>(null);
   readonly loading = signal(false);
+  readonly isEmpty = computed(() => this.cart.items().length === 0);
+  readonly paymentOptions = [
+    { value: 'PIX', label: 'PIX', icon: 'qr_code_2', description: 'Confirmacao rapida por QR Code.' },
+    { value: 'CREDIT_CARD', label: 'Cartao', icon: 'credit_card', description: 'Credito tokenizado pelo gateway.' },
+    { value: 'DEBIT_CARD', label: 'Debito', icon: 'credit_card', description: 'Debito direto no checkout.' },
+    { value: 'CASH', label: 'Dinheiro', icon: 'payments', description: 'Pagamento na entrega com troco.' }
+  ];
   readonly form = this.fb.nonNullable.group({
     couponCode: ['ELIDE10'],
     paymentMethod: ['PIX'],
@@ -28,6 +36,20 @@ export class CheckoutPageComponent {
 
   applyCoupon(): void {
     this.cart.applyCoupon(this.form.controls.couponCode.value);
+    const code = this.form.controls.couponCode.value.trim();
+    this.message.set(code ? `Cupom ${code.toUpperCase()} aplicado ao pedido.` : 'Cupom removido do pedido.');
+  }
+
+  selectPayment(value: string): void {
+    this.form.controls.paymentMethod.setValue(value);
+  }
+
+  selectedPayment(): string {
+    return this.form.controls.paymentMethod.value;
+  }
+
+  paymentHint(): string {
+    return this.paymentOptions.find((option) => option.value === this.selectedPayment())?.description ?? '';
   }
 
   finish(): void {

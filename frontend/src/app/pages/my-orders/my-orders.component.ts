@@ -5,10 +5,11 @@ import { OrderResponse, OrderStatus } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { MATERIAL } from '../shared/page-kit';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 
 @Component({
   selector: 'elide-my-orders-page',
-  imports: [...MATERIAL, RouterLink, ClientHeadingComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, CustomerNavComponent],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

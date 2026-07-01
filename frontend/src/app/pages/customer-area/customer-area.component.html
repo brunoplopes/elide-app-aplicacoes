@@ -8,8 +8,14 @@
     [actionLink]="page.vm().actionLink ?? '/'"
   />
 
+  <elide-customer-nav />
+
+  @if (page.loading()) {
+    <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Atualizando seus dados...</span></div>
+  }
+
   @if (page.error()) {
-    <div class="api-note"><mat-icon>info</mat-icon><span>{{ page.error() }}</span><button mat-button type="button" (click)="page.load()">Atualizar</button></div>
+    <div class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.error() }}</span><button mat-button type="button" (click)="page.load()">Atualizar</button></div>
   }
 
   @if (page.vm().metrics?.length) {
@@ -21,6 +27,7 @@
   }
 
   @if (page.vm().actions?.length) {
+    <h2 class="section-title">Acoes do cliente</h2>
     <div class="action-grid">
       @for (action of page.vm().actions; track action.path) {
         <a class="feature-card" [routerLink]="action.path">

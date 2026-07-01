@@ -1,6 +1,8 @@
 <section class="elide-section">
   <elide-client-heading title="Historico de pedidos" description="Acompanhe pedidos recentes, status, reembolso e recompra." actionLabel="Rastrear atual" actionIcon="near_me" actionLink="/rastreamento" />
-  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+  <elide-customer-nav />
+  @if (page.loading()) { <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Carregando pedidos...</span></div> }
+  @if (page.message()) { <p class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.message() }}</span></p> }
   <div class="order-list">
     @for (order of page.orders(); track order.id) {
       <article class="order-card">
@@ -17,11 +19,12 @@
         <mat-progress-bar mode="determinate" [value]="page.progress(order.status)" />
       </article>
     } @empty {
-      <article class="order-card">
+      <article class="order-card empty-card">
         <div>
           <h2>Nenhum pedido encontrado</h2>
           <p>Quando voce finalizar um pedido, ele aparecera aqui via API.</p>
         </div>
+        <a mat-flat-button routerLink="/restaurantes">Fazer pedido</a>
       </article>
     }
   </div>

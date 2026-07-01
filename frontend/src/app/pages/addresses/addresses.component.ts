@@ -5,12 +5,13 @@ import { catchError, of } from 'rxjs';
 import { CustomerAddress, CustomerAddressRequest } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
 import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'addresses-page',
-  imports: [...MATERIAL, RouterLink, ReactiveFormsModule, ClientHeadingComponent, MetricCardComponent],
+  imports: [...MATERIAL, RouterLink, ReactiveFormsModule, ClientHeadingComponent, CustomerNavComponent, MetricCardComponent],
   templateUrl: './addresses.component.html',
   styleUrl: './addresses.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

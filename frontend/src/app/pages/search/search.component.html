@@ -1,23 +1,65 @@
 <section class="search-page">
   <elide-client-heading eyebrow="Busca" title="Pesquisar" description="Encontre restaurantes, mercados, farmacias, padarias, lanchonetes, acougues, pet shops, produtos e categorias." />
 
+  <section class="search-panel">
+    <form class="search-box" (ngSubmit)="page.search()">
+      <mat-icon>search</mat-icon>
+      <input [formControl]="page.searchControl" placeholder="Buscar restaurante, produto ou categoria" />
+      <button mat-flat-button type="submit">Buscar</button>
+    </form>
+    <div class="quick-categories" aria-label="Categorias principais">
+      @for (category of page.suggestedCategories; track category.title) {
+        <a [routerLink]="category.path">
+          <mat-icon>{{ category.icon }}</mat-icon>
+          <span>{{ category.title }}</span>
+        </a>
+      }
+    </div>
+  </section>
+
+  @if (page.loading()) {
+    <section class="feedback-state">
+      <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
+      <span>Buscando opcoes para voce...</span>
+    </section>
+  }
+
+  @if (page.errorMessage()) {
+    <section class="feedback-state error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ page.errorMessage() }}</span>
+    </section>
+  }
+
   <section class="panel">
-    <h2>Lojas</h2>
+    <div class="panel-heading">
+      <h2>Lojas</h2>
+      <span>{{ page.stores().totalElements }} resultado(s)</span>
+    </div>
     <div class="result-grid">
       @for (store of page.stores().content; track store.id) {
         <article class="result-card">
+          <div class="result-icon"><mat-icon>storefront</mat-icon></div>
           <strong>{{ store.name }}</strong>
-          <span>{{ store.segment }} - {{ store.open ? 'Aberta' : 'Fechada' }}</span>
+          <span>{{ store.segment }} · {{ page.distance(store) }}</span>
+          <small>{{ store.open ? 'Aberta agora' : 'Fechada' }} · Entrega {{ page.money(store.deliveryFee) }}</small>
           <a mat-button [routerLink]="['/produto', store.id]">Ver produtos</a>
         </article>
       } @empty {
-        <article class="result-card"><strong>Nenhuma loja</strong><span>Tente outro termo.</span></article>
+        <article class="empty-state">
+          <mat-icon>storefront</mat-icon>
+          <strong>Nenhuma loja encontrada</strong>
+          <span>Tente buscar por restaurantes, mercados, farmacias ou outra categoria.</span>
+        </article>
       }
     </div>
   </section>
 
   <section class="panel">
-    <h2>Categorias</h2>
+    <div class="panel-heading">
+      <h2>Categorias</h2>
+      <span>{{ page.categories().length }} encontrada(s)</span>
+    </div>
     <div class="chip-grid">
       @for (category of page.categories(); track category.id) {
         <a class="category-chip" [routerLink]="['/busca']" [queryParams]="{ q: category.name }">
@@ -25,16 +67,25 @@
           <span>{{ category.name }}</span>
         </a>
       } @empty {
-        <article class="result-card"><strong>Nenhuma categoria</strong><span>Categorias relacionadas aparecem aqui.</span></article>
+        @for (category of page.suggestedCategories; track category.title) {
+          <a class="category-chip" [routerLink]="category.path">
+            <mat-icon>{{ category.icon }}</mat-icon>
+            <span>{{ category.title }}</span>
+          </a>
+        }
       }
     </div>
   </section>
 
   <section class="panel">
-    <h2>Produtos</h2>
+    <div class="panel-heading">
+      <h2>Produtos</h2>
+      <span>{{ page.products().totalElements }} resultado(s)</span>
+    </div>
     <div class="result-grid">
       @for (product of page.products().content; track product.id) {
         <article class="result-card">
+          <div class="result-icon"><mat-icon>restaurant_menu</mat-icon></div>
           <strong>{{ product.name }}</strong>
           <span>{{ product.description }}</span>
           <small>{{ page.money(product.price) }}</small>
@@ -44,7 +95,11 @@
           <a mat-button [routerLink]="['/produto', product.storeId]">Ver loja</a>
         </article>
       } @empty {
-        <article class="result-card"><strong>Nenhum produto</strong><span>Produtos aparecem aqui.</span></article>
+        <article class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <strong>Nenhum produto encontrado</strong>
+          <span>Produtos relacionados aparecem aqui quando houver resultados.</span>
+        </article>
       }
     </div>
   </section>

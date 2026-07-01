@@ -18,7 +18,10 @@
     <mat-form-field appearance="outline"><mat-label>Usuario</mat-label><input matInput formControlName="username"></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>E-mail</mat-label><input matInput type="email" formControlName="email"></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>Senha</mat-label><input matInput type="password" formControlName="password"></mat-form-field>
-    <button mat-flat-button type="submit">Cadastrar</button>
+    @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+    <button mat-flat-button type="submit" [disabled]="page.loading() || page.form.invalid">
+      {{ page.loading() ? 'Criando conta...' : 'Cadastrar' }}
+    </button>
     <a mat-button routerLink="/login">Ja tenho conta</a>
   </form>
 </section>

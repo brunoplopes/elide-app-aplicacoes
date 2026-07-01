@@ -1,39 +1,78 @@
 <section class="cart-page">
   <elide-client-heading eyebrow="Pedido" title="Carrinho" description="Revise os itens antes de seguir para o checkout." />
   <article class="cart-card">
-    @for (item of page.cart.items(); track item.product.id) {
-      <div class="cart-row">
-        <mat-icon>shopping_bag</mat-icon>
-        <div>
-          <strong>{{ item.product.name }}</strong>
-          <span>{{ item.quantity }} x {{ item.product.price | currency:'BRL' }}</span>
-          @if (item.addons?.length) {
-            <div class="cart-addons">
-              @for (addon of item.addons; track addon.id) {
-                <span>
-                  {{ addon.name }} +{{ addon.price | currency:'BRL' }}
-                  <button mat-icon-button type="button" (click)="page.cart.setAddonQuantity(item.product.id, addon.id, addon.quantity - 1)" aria-label="Diminuir adicional"><mat-icon>remove</mat-icon></button>
-                  <b>{{ addon.quantity }}</b>
-                  <button mat-icon-button type="button" (click)="page.cart.setAddonQuantity(item.product.id, addon.id, addon.quantity + 1)" aria-label="Aumentar adicional"><mat-icon>add</mat-icon></button>
-                </span>
-              }
-            </div>
-          }
-          <label class="cart-note">
-            <span>Observacao</span>
-            <input [value]="item.note ?? ''" placeholder="Ex.: sem cebola" (change)="page.cart.setNote(item.product.id, $any($event.target).value)">
-          </label>
-        </div>
-        <div class="qty-actions">
-          <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity - 1)" aria-label="Diminuir"><mat-icon>remove</mat-icon></button>
-          <strong>{{ item.quantity }}</strong>
-          <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity + 1)" aria-label="Aumentar"><mat-icon>add</mat-icon></button>
-        </div>
-        <button mat-icon-button type="button" (click)="page.cart.remove(item.product.id)" aria-label="Remover"><mat-icon>delete</mat-icon></button>
-      </div>
-    } @empty {
-      <div class="cart-row">Seu carrinho esta vazio.</div>
+    @if (!page.isEmpty()) {
+      <header class="cart-header">
+        <strong>{{ page.itemCount() }} item(ns) no pedido</strong>
+        <button mat-button type="button" (click)="page.cart.clear()">Limpar carrinho</button>
+      </header>
     }
-    <footer><div><span>Subtotal {{ page.cart.subtotal() | currency:'BRL' }}</span><span>Frete {{ page.cart.deliveryFee() | currency:'BRL' }}</span><span>Desconto - {{ page.cart.discount() | currency:'BRL' }}</span><strong>Total {{ page.cart.total() | currency:'BRL' }}</strong></div><a mat-flat-button routerLink="/checkout">Checkout</a></footer>
+
+    <div class="cart-list">
+      @for (item of page.cart.items(); track item.product.id) {
+        <div class="cart-row">
+          <mat-icon class="item-icon">shopping_bag</mat-icon>
+          <div class="item-info">
+            <div class="item-title">
+              <strong>{{ item.product.name }}</strong>
+              <span>{{ page.cart.itemTotal(item) | currency:'BRL' }}</span>
+            </div>
+            <span>{{ item.quantity }} x {{ item.product.price | currency:'BRL' }}</span>
+            @if (item.addons?.length) {
+              <div class="cart-addons">
+                <strong>Adicionais</strong>
+                @for (addon of item.addons; track addon.id) {
+                  <span>
+                    <small>{{ addon.name }} +{{ addon.price | currency:'BRL' }}</small>
+                    <button mat-icon-button type="button" (click)="page.cart.setAddonQuantity(item.product.id, addon.id, addon.quantity - 1)" aria-label="Diminuir adicional"><mat-icon>remove</mat-icon></button>
+                    <b>{{ addon.quantity }}</b>
+                    <button mat-icon-button type="button" (click)="page.cart.setAddonQuantity(item.product.id, addon.id, addon.quantity + 1)" aria-label="Aumentar adicional"><mat-icon>add</mat-icon></button>
+                  </span>
+                }
+              </div>
+            }
+            <label class="cart-note">
+              <span>Observacao do item</span>
+              <input [value]="item.note ?? ''" placeholder="Ex.: sem cebola" (input)="page.cart.setNote(item.product.id, $any($event.target).value)">
+            </label>
+          </div>
+          <div class="qty-actions" aria-label="Quantidade">
+            <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity - 1)" aria-label="Diminuir"><mat-icon>remove</mat-icon></button>
+            <strong>{{ item.quantity }}</strong>
+            <button mat-icon-button type="button" (click)="page.cart.setQuantity(item.product.id, item.quantity + 1)" aria-label="Aumentar"><mat-icon>add</mat-icon></button>
+          </div>
+          <button mat-icon-button type="button" (click)="page.cart.remove(item.product.id)" aria-label="Remover"><mat-icon>delete</mat-icon></button>
+        </div>
+      } @empty {
+        <div class="empty-cart">
+          <mat-icon>shopping_cart</mat-icon>
+          <strong>Seu carrinho esta vazio</strong>
+          <span>Escolha uma loja e adicione produtos para iniciar o pedido.</span>
+          <a mat-flat-button routerLink="/restaurantes">Ver restaurantes</a>
+        </div>
+      }
+    </div>
+
+    <footer class="cart-summary" [class.sticky-summary]="!page.isEmpty()">
+      <form class="coupon-box" (ngSubmit)="page.applyCoupon()">
+        <label for="cart-coupon">Cupom</label>
+        <div>
+          <input id="cart-coupon" [formControl]="page.couponControl" placeholder="ELIDE10">
+          <button mat-button type="submit">Aplicar</button>
+        </div>
+        @if (page.message()) { <span>{{ page.message() }}</span> }
+      </form>
+      <div class="summary-lines">
+        <div><span>Subtotal</span><strong>{{ page.cart.subtotal() | currency:'BRL' }}</strong></div>
+        <div><span>Frete</span><strong>{{ page.cart.deliveryFee() | currency:'BRL' }}</strong></div>
+        <div class="discount"><span>Cupom</span><strong>- {{ page.cart.discount() | currency:'BRL' }}</strong></div>
+        <div class="total"><span>Total</span><strong>{{ page.cart.total() | currency:'BRL' }}</strong></div>
+      </div>
+      @if (page.isEmpty()) {
+        <button mat-flat-button type="button" disabled>Checkout indisponivel</button>
+      } @else {
+        <a mat-flat-button routerLink="/checkout">Ir para checkout</a>
+      }
+    </footer>
   </article>
 </section>

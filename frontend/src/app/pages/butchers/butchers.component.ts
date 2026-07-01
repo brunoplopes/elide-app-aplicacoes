@@ -1,11 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
-import { Page, Store } from '../../models/marketplace.models';
-import { ApiService } from '../../services/api.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CatalogViewComponent } from '../shared/catalog-view.component';
-
-const emptyStores: Page<Store> = { content: [], totalElements: 0, totalPages: 0, number: 0 };
 
 @Component({
   selector: 'elide-butchers-page',
@@ -15,9 +9,8 @@ const emptyStores: Page<Store> = { content: [], totalElements: 0, totalPages: 0,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ButchersPageComponent {
-  private readonly api = inject(ApiService);
   readonly page = this;
   readonly title = 'Acougues';
   readonly subtitle = 'Cortes selecionados, kits para churrasco e preparo do dia.';
-  readonly stores = toSignal(this.api.stores({ segment: 'Acougue' }).pipe(catchError(() => of(emptyStores))), { initialValue: emptyStores });
+  readonly segment = 'Acougue';
 }

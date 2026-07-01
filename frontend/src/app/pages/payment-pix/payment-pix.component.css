@@ -78,9 +78,15 @@ textarea {
   resize: vertical;
   border: 1px solid var(--elide-border);
   border-radius: 8px;
-  background: var(--elide-mist);
+  background: #fff;
   color: var(--elide-ink);
   padding: .9rem;
+  outline: 0;
+}
+
+textarea:focus {
+  border-color: var(--elide-orange);
+  box-shadow: 0 0 0 1px rgba(255, 107, 0, .18);
 }
 
 .button-row {
@@ -90,7 +96,7 @@ textarea {
 }
 
 button {
-  height: 42px;
+  min-height: 44px;
   border-radius: 12px !important;
   background: var(--elide-gradient) !important;
   color: white !important;

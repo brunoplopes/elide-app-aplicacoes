@@ -1,13 +1,18 @@
 <section class="home-hero" [style.background-image]="'linear-gradient(to right, rgba(30, 30, 30, .88), rgba(30, 30, 30, .58), rgba(30, 30, 30, .18)), url(' + page.heroImage + ')'">
   <div class="hero-content">
     <span class="hero-badge"><mat-icon>bolt</mat-icon> Delivery para a sua cidade</span>
+    <div class="location-bar" role="group" aria-label="Endereco de entrega">
+      <mat-icon>location_on</mat-icon>
+      <span>{{ page.locationLabel }}</span>
+      <a routerLink="/enderecos">Alterar</a>
+    </div>
     <h1>Seu pedido, <strong>na sua porta.</strong></h1>
     <p>Restaurantes, lanchonetes, pizzarias, mercados e farmacias da sua regiao, com entrega rapida e segura.</p>
-    <label class="hero-search">
+    <form class="hero-search" (ngSubmit)="page.search()">
       <mat-icon>search</mat-icon>
-      <input placeholder="Buscar lojas, pratos ou produtos..." />
-      <a mat-flat-button routerLink="/restaurantes">Buscar</a>
-    </label>
+      <input [formControl]="page.searchControl" placeholder="Buscar lojas, pratos ou produtos..." />
+      <button mat-flat-button type="submit">Buscar</button>
+    </form>
   </div>
 </section>
 
@@ -18,7 +23,62 @@
       <a class="category-card" [routerLink]="category.path">
         <mat-icon>{{ category.icon }}</mat-icon>
         <strong>{{ category.title }}</strong>
+        <span>{{ category.description }}</span>
       </a>
+    }
+  </div>
+</section>
+
+<section class="elide-section delivery-section">
+  <div class="section-heading">
+    <div>
+      <h2>Lojas proximas</h2>
+      <p>Opcoes perto do endereco selecionado, prontas para entregar.</p>
+    </div>
+    <a routerLink="/busca">Ver todas</a>
+  </div>
+  <div class="store-grid">
+    @for (store of page.stores; track store.name) {
+      <article class="delivery-card">
+        <div class="store-thumb"></div>
+        <div class="store-card-body">
+          <div>
+            <strong>{{ store.name }}</strong>
+            <span>{{ store.segment }} · {{ store.distance }}</span>
+          </div>
+          <small><mat-icon>schedule</mat-icon>{{ store.eta }}</small>
+          <small><mat-icon>payments</mat-icon>{{ store.fee }}</small>
+        </div>
+        <span class="status-chip" [class.closed]="!store.open">{{ store.open ? 'Aberta' : 'Fechada' }}</span>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="elide-section delivery-section muted-band">
+  <div class="section-heading">
+    <div>
+      <h2>Abertas agora</h2>
+      <p>Lojas aceitando pedidos neste momento.</p>
+    </div>
+    <a routerLink="/busca" [queryParams]="{ q: 'aberto agora' }">Explorar</a>
+  </div>
+  <div class="compact-store-list">
+    @for (store of page.openStores; track store.name) {
+      <a class="compact-store" routerLink="/busca" [queryParams]="{ q: store.segment }">
+        <mat-icon>storefront</mat-icon>
+        <span>
+          <strong>{{ store.name }}</strong>
+          <small>{{ store.segment }} · {{ store.eta }} · {{ store.distance }}</small>
+        </span>
+        <mat-icon>chevron_right</mat-icon>
+      </a>
+    } @empty {
+      <article class="empty-state">
+        <mat-icon>storefront</mat-icon>
+        <strong>Nenhuma loja aberta agora</strong>
+        <span>Atualize o endereco ou tente novamente em alguns minutos.</span>
+      </article>
     }
   </div>
 </section>
@@ -39,16 +99,22 @@
     </div>
   </div>
   <div>
-    <h2>Lojas em destaque</h2>
+    <h2>Ofertas perto de voce</h2>
     <div class="store-list">
-      @for (store of page.stores; track store.name) {
+      @for (store of page.offerStores; track store.name) {
         <article class="store-row">
           <div class="store-thumb"></div>
           <div>
             <strong>{{ store.name }}</strong>
-            <span>{{ store.segment }} · {{ store.eta }} · {{ store.fee }}</span>
+            <span>{{ store.offer }} · {{ store.segment }} · {{ store.eta }}</span>
           </div>
           <small><mat-icon>star</mat-icon>{{ store.rating }}</small>
+        </article>
+      } @empty {
+        <article class="empty-state">
+          <mat-icon>local_offer</mat-icon>
+          <strong>Nenhuma oferta ativa</strong>
+          <span>Novos cupons aparecem aqui assim que estiverem disponiveis.</span>
         </article>
       }
     </div>

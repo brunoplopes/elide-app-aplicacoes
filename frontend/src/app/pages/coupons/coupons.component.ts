@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { CustomerCoupon } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
 import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'coupons-page',
-  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, MetricCardComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, CustomerNavComponent, MetricCardComponent],
   templateUrl: './coupons.component.html',
   styleUrl: './coupons.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -19,6 +20,7 @@ export class CouponsPageComponent implements OnInit {
 
   readonly page = this;
   readonly coupons = signal<CustomerCoupon[]>([]);
+  readonly loading = signal(true);
   readonly message = signal<string | null>(null);
 
   readonly vm = computed<FeaturePageVm>(() => ({
@@ -35,10 +37,11 @@ export class CouponsPageComponent implements OnInit {
   }));
 
   ngOnInit(): void {
+    this.loading.set(true);
     this.api.coupons().pipe(catchError(() => {
       this.message.set('Endpoint /customer/coupons ainda nao respondeu.');
       return of([]);
-    })).subscribe((coupons) => this.coupons.set(coupons));
+    }), finalize(() => this.loading.set(false))).subscribe((coupons) => this.coupons.set(coupons));
   }
 
   money(value: number): string {

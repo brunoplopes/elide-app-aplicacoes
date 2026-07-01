@@ -1,5 +1,7 @@
 <section class="elide-section">
   <elide-client-heading title="Carteira" description="Gerencie saldo, reembolsos, cashback e formas de pagamento." actionLabel="Pagamentos" actionIcon="payments" actionLink="/pagamentos" />
+  <elide-customer-nav />
+  @if (page.loading()) { <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Carregando carteira...</span></div> }
   <div class="wallet-grid">
     <article class="balance-card">
       <span>Saldo disponivel</span>
@@ -8,7 +10,7 @@
     </article>
     <article class="panel-card">
       <h2>Extrato</h2>
-      @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+      @if (page.message()) { <p class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.message() }}</span></p> }
       @for (entry of page.entries(); track entry.id) {
         <div class="entry"><mat-icon>{{ entry.icon }}</mat-icon><strong>{{ entry.title }}</strong><span>{{ page.money(entry.amount) }}</span></div>
       } @empty {

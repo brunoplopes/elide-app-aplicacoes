@@ -24,7 +24,7 @@ Use estes status:
 
 ## Task 1 - Layout Global, Header, Footer e Menu
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Corrigir a base global de navegacao e eliminar problemas visuais compartilhados por todas as paginas.
@@ -77,7 +77,7 @@ Valide no final com ng build --configuration development e revisao responsiva.
 
 ## Task 2 - Home e Busca de Delivery
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Transformar a Home em uma experiencia real de delivery, com busca, localizacao, categorias e lojas proximas.
@@ -122,7 +122,7 @@ Valide no final com ng build --configuration development.
 
 ## Task 3 - Catalogo, Listas e Busca
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Melhorar a navegacao por lojas e produtos nas paginas de catalogo.
@@ -173,7 +173,7 @@ Valide no final com ng build --configuration development.
 
 ## Task 4 - Login, Cadastro e Formularios
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Melhorar conversao, legibilidade e consistencia visual dos formularios.
@@ -224,7 +224,7 @@ Valide no final com ng build --configuration development.
 
 ## Task 5 - Carrinho e Checkout
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Criar uma experiencia de compra mais proxima de apps de delivery.
@@ -273,7 +273,7 @@ Valide no final com ng build --configuration development.
 
 ## Task 6 - Area do Cliente
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Organizar a experiencia do cliente autenticado com navegacao clara e acoes uteis.
@@ -325,7 +325,7 @@ Valide no final com ng build --configuration development.
 
 ## Task 7 - Area da Loja
 
-Status: `TODO`
+Status: `DONE`
 
 Objetivo:
 Transformar `/loja` em uma central operacional clara para estabelecimentos.

@@ -4,6 +4,7 @@ import { MATERIAL } from '../shared/page-kit';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'elide-login-page',
@@ -20,6 +21,7 @@ export class LoginPageComponent {
   private readonly router = inject(Router);
 
   readonly error = signal('');
+  readonly loading = signal(false);
   readonly form = this.fb.nonNullable.group({
     username: ['leonardo_admin', Validators.required],
     password: ['elide.com.leo.2026', Validators.required]
@@ -27,10 +29,15 @@ export class LoginPageComponent {
 
   submit(): void {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
-    this.auth.login(this.form.controls.username.value, this.form.controls.password.value).subscribe({
+    this.loading.set(true);
+    this.error.set('');
+    this.auth.login(this.form.controls.username.value, this.form.controls.password.value).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
       next: (profile) => {
         if (profile.mustChangePassword) {
           void this.router.navigateByUrl('/alterar-senha');

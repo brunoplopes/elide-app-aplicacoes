@@ -8,7 +8,10 @@
     [actionLink]="page.vm().actionLink ?? '/'"
   />
 
-  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+  <elide-customer-nav />
+
+  @if (page.loading()) { <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Carregando favoritos...</span></div> }
+  @if (page.message()) { <p class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.message() }}</span></p> }
 
   @if (page.vm().metrics?.length) {
     <div class="metric-grid">
@@ -46,5 +49,7 @@
         </article>
       }
     </div>
+  } @else if (!page.loading()) {
+    <div class="action-grid"><article class="feature-card"><mat-icon>favorite_border</mat-icon><strong>Nenhum favorito</strong><span>Favorite lojas para voltar ao pedido com menos passos.</span><button mat-button type="button" routerLink="/restaurantes">Explorar lojas</button></article></div>
   }
 </section>

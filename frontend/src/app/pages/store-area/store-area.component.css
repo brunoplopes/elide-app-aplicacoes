@@ -32,6 +32,55 @@
   font-weight: 850 !important;
 }
 
+.store-command {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--elide-border);
+  border-radius: 8px;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: var(--elide-shadow-card);
+}
+
+.store-command > div:first-child {
+  display: grid;
+  gap: .2rem;
+  min-width: 0;
+}
+
+.store-command strong {
+  color: var(--elide-ink);
+  font-size: 1.1rem;
+  font-weight: 950;
+}
+
+.store-command small {
+  color: var(--elide-muted);
+  font-weight: 750;
+}
+
+.command-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: .65rem;
+}
+
+.command-actions button,
+.section-toolbar button {
+  border-radius: 999px !important;
+  background: var(--elide-gradient) !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+}
+
+.command-actions button mat-icon,
+.section-toolbar button mat-icon {
+  margin-right: .35rem;
+}
+
 .store-tabs {
   display: flex;
   gap: .45rem;
@@ -50,18 +99,41 @@
 
 .store-tabs button {
   flex: 0 0 auto;
-  min-height: 2.75rem;
+  display: inline-grid !important;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-content: center;
+  column-gap: .35rem;
+  min-height: 3.25rem;
+  min-width: 8.75rem;
   border-radius: 8px !important;
   color: var(--elide-muted) !important;
   font-weight: 850 !important;
   letter-spacing: 0;
+  line-height: 1.1 !important;
 }
 
 .store-tabs button mat-icon {
+  grid-row: 1 / span 2;
   width: 1.15rem;
   height: 1.15rem;
-  margin-right: .35rem;
   font-size: 1.15rem;
+}
+
+.store-tabs button span,
+.store-tabs button small {
+  overflow: hidden;
+  max-width: 6.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.store-tabs button small {
+  color: inherit;
+  font-size: .68rem;
+  font-weight: 800;
+  opacity: .72;
 }
 
 .store-tabs button.is-active {
@@ -100,7 +172,8 @@
 .store-panel,
 .task-card,
 .order-card,
-.table-panel {
+.table-panel,
+.detail-panel {
   min-width: 0;
   border: 1px solid var(--elide-border);
   border-radius: 8px;
@@ -177,6 +250,53 @@
   font-weight: 950;
 }
 
+.detail-panel,
+.section-toolbar {
+  margin: 0 1rem 1rem;
+  padding: 1rem;
+}
+
+.detail-panel h3,
+.section-toolbar h3 {
+  margin: .25rem 0 0;
+  color: var(--elide-ink);
+  letter-spacing: 0;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .75rem;
+  margin-top: 1rem;
+}
+
+.detail-grid span {
+  display: grid;
+  gap: .25rem;
+  border: 1px solid var(--elide-border);
+  border-radius: 8px;
+  padding: .85rem;
+  color: var(--elide-muted);
+  font-weight: 750;
+}
+
+.detail-grid strong {
+  color: var(--elide-ink);
+  font-size: .8rem;
+  text-transform: uppercase;
+}
+
+.section-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--elide-border);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--elide-shadow-card);
+}
+
 .task-card {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -244,8 +364,15 @@
 }
 
 .document-row,
-.operation-row {
+.operation-row,
+.category-row,
+.addon-row,
+.status-table-row {
   grid-template-columns: minmax(0, 1fr) minmax(92px, auto) minmax(120px, auto) minmax(80px, auto);
+}
+
+.product-row {
+  grid-template-columns: minmax(0, 1fr) minmax(86px, auto) minmax(96px, auto) minmax(130px, auto);
 }
 
 .table-row button {
@@ -256,9 +383,17 @@
 }
 
 .empty-row {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
   padding: 1rem;
   color: var(--elide-muted);
   font-weight: 750;
+}
+
+.empty-row mat-icon,
+.empty-card mat-icon {
+  color: var(--elide-orange);
 }
 
 .table-panel header {
@@ -320,10 +455,20 @@
   color: white !important;
 }
 
+.empty-card {
+  align-content: center;
+  justify-items: center;
+  min-height: 12rem;
+  text-align: center;
+}
+
 :host-context(.dark) .store-panel,
 :host-context(.dark) .task-card,
 :host-context(.dark) .order-card,
 :host-context(.dark) .table-panel,
+:host-context(.dark) .detail-panel,
+:host-context(.dark) .section-toolbar,
+:host-context(.dark) .store-command,
 :host-context(.dark) .store-tabs,
 :host-context(.dark) .store-tab-panel,
 :host-context(.dark) .store-alert {
@@ -337,9 +482,13 @@
 :host-context(.dark) .hero-panel h2,
 :host-context(.dark) .compact-panel h3,
 :host-context(.dark) .table-panel h3,
+:host-context(.dark) .detail-panel h3,
+:host-context(.dark) .section-toolbar h3,
+:host-context(.dark) .store-command strong,
 :host-context(.dark) .task-card strong,
 :host-context(.dark) .order-card strong,
 :host-context(.dark) .table-row strong,
+:host-context(.dark) .detail-grid strong,
 :host-context(.dark) .status-row span {
   color: white;
 }
@@ -349,6 +498,16 @@
 }
 
 @media (max-width: 860px) {
+  .store-command,
+  .section-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .command-actions {
+    flex-wrap: wrap;
+  }
+
   .store-tabs {
     margin-inline: -.25rem;
   }
@@ -371,6 +530,15 @@
   .table-row button {
     justify-self: start;
   }
+
+  .product-row,
+  .document-row,
+  .operation-row,
+  .category-row,
+  .addon-row,
+  .status-table-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -391,6 +559,17 @@
   .store-alert button {
     width: 100%;
     margin-left: 0;
+  }
+
+  .command-actions,
+  .command-actions button,
+  .section-toolbar button {
+    width: 100%;
+  }
+
+  .command-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .order-card footer {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { CustomerPaymentMethod } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
@@ -20,6 +20,7 @@ export class PaymentsPageComponent implements OnInit {
   readonly page = this;
   readonly methods = signal<CustomerPaymentMethod[]>([]);
   readonly message = signal<string | null>(null);
+  readonly loading = signal(false);
 
   readonly vm = computed<FeaturePageVm>(() => ({
     eyebrow: 'Checkout',
@@ -33,9 +34,10 @@ export class PaymentsPageComponent implements OnInit {
   }));
 
   ngOnInit(): void {
+    this.loading.set(true);
     this.api.paymentMethods().pipe(catchError(() => {
       this.message.set('Endpoint /customer/payments ainda nao respondeu.');
       return of([]);
-    })).subscribe((methods) => this.methods.set(methods));
+    }), finalize(() => this.loading.set(false))).subscribe((methods) => this.methods.set(methods));
   }
 }

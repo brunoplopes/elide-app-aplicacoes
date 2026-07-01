@@ -8,9 +8,11 @@
     [actionLink]="page.vm().actionLink ?? '/'"
   />
 
+  <elide-customer-nav />
+
   @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
 
-  <form class="address-form" [formGroup]="page.form" (ngSubmit)="page.save()">
+  <form class="address-form elide-form-card" [formGroup]="page.form" (ngSubmit)="page.save()">
     <div class="form-grid">
       <mat-form-field appearance="outline">
         <mat-label>Apelido</mat-label>
@@ -34,8 +36,8 @@
       </mat-form-field>
     </div>
     <div class="form-actions">
-      <button mat-flat-button color="primary" type="submit" [disabled]="page.saving()">
-        {{ page.editingId() ? 'Atualizar endereco' : 'Salvar endereco' }}
+      <button mat-flat-button color="primary" type="submit" [disabled]="page.saving() || page.form.invalid">
+        {{ page.saving() ? 'Salvando...' : (page.editingId() ? 'Atualizar endereco' : 'Salvar endereco') }}
       </button>
       @if (page.editingId()) {
         <button mat-button type="button" (click)="page.reset()">Cancelar</button>

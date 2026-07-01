@@ -24,3 +24,17 @@
   color: var(--elide-orange) !important;
   font-weight: 850 !important;
 }
+
+.customer-state button {
+  margin-left: auto;
+  border-radius: 999px !important;
+  color: var(--elide-orange) !important;
+  font-weight: 850 !important;
+}
+
+.section-title {
+  margin: 1.5rem 0 1rem;
+  color: var(--elide-ink);
+  font-size: 1.2rem;
+  font-weight: 900;
+}

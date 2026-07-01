@@ -13,7 +13,11 @@
 .auth-links a { color: var(--elide-orange); font-weight: 900; text-decoration: none; }
 .error { color: #dc2626; font-weight: 800; }
 :host-context(.dark) .auth-copy h1 { color: white; }
-@media (max-width: 880px) { .auth-page { grid-template-columns: 1fr; } .auth-benefits { grid-template-columns: 1fr; } }
+@media (max-width: 880px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-card { order: -1; justify-self: stretch; width: 100%; }
+  .auth-benefits { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 520px) {
   .auth-page {

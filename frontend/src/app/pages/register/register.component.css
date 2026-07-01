@@ -9,7 +9,10 @@ p { color: var(--elide-muted); }
 .steps strong { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--elide-orange); color: white; }
 h2 { margin: 0; font-size: 1.6rem; font-weight: 900; }
 :host-context(.dark) h1 { color: white; }
-@media (max-width: 860px) { .register-page { grid-template-columns: 1fr; } }
+@media (max-width: 860px) {
+  .register-page { grid-template-columns: 1fr; }
+  .register-page form { order: -1; }
+}
 
 @media (max-width: 520px) {
   .register-page {

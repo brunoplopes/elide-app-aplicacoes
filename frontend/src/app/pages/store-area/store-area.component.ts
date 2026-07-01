@@ -23,13 +23,32 @@ import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
 import { PageMetric } from '../shared/page-kit';
 
-type StorePanel = 'dashboard' | 'cadastro' | 'catalogo' | 'pedidos' | 'operacao' | 'financeiro';
+type StorePanel =
+  | 'dashboard'
+  | 'cadastro'
+  | 'documentos'
+  | 'produtos'
+  | 'categorias'
+  | 'complementos'
+  | 'horarios'
+  | 'estoque'
+  | 'promocoes'
+  | 'pedidos'
+  | 'financeiro'
+  | 'relatorios'
+  | 'avaliacoes';
 
 type StoreTask = {
   title: string;
   description: string;
   icon: string;
   status: string;
+};
+
+type StoreStatusRow = {
+  status: OrderStatus;
+  label: string;
+  value: number;
 };
 
 const orderFlow: Partial<Record<OrderStatus, OrderStatus>> = {
@@ -74,10 +93,17 @@ export class StoreAreaPageComponent implements OnInit {
   readonly panels: { id: StorePanel; label: string; icon: string }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
     { id: 'cadastro', label: 'Cadastro', icon: 'storefront' },
-    { id: 'catalogo', label: 'Catalogo', icon: 'restaurant_menu' },
+    { id: 'documentos', label: 'Documentos', icon: 'upload_file' },
+    { id: 'produtos', label: 'Produtos', icon: 'restaurant_menu' },
+    { id: 'categorias', label: 'Categorias', icon: 'category' },
+    { id: 'complementos', label: 'Complementos', icon: 'add_circle' },
+    { id: 'horarios', label: 'Horarios', icon: 'schedule' },
+    { id: 'estoque', label: 'Estoque', icon: 'inventory_2' },
+    { id: 'promocoes', label: 'Promocoes', icon: 'local_offer' },
     { id: 'pedidos', label: 'Pedidos', icon: 'receipt_long' },
-    { id: 'operacao', label: 'Operacao', icon: 'settings' },
-    { id: 'financeiro', label: 'Financeiro', icon: 'account_balance_wallet' }
+    { id: 'financeiro', label: 'Financeiro', icon: 'account_balance_wallet' },
+    { id: 'relatorios', label: 'Relatorios', icon: 'bar_chart' },
+    { id: 'avaliacoes', label: 'Avaliacoes', icon: 'reviews' }
   ];
 
   readonly metrics = computed<PageMetric[]>(() => {
@@ -136,6 +162,13 @@ export class StoreAreaPageComponent implements OnInit {
     { title: 'Dashboard', description: 'KPIs operacionais, metas, SLA, ruptura e performance por horario.', icon: 'dashboard', status: `${this.dashboard()?.activeProducts ?? 0} ativos` },
     { title: 'Avaliacoes', description: 'Notas, comentarios, respostas publicas e oportunidades de melhoria.', icon: 'reviews', status: `${this.reviews().length} respostas` }
   ]);
+
+  readonly stockAlerts = computed(() => this.products().filter((product) => product.stockQuantity <= 5));
+  readonly pausedProducts = computed(() => this.products().filter((product) => !product.active));
+  readonly activePromotions = computed(() => this.promotions().filter((promotion) => promotion.active));
+  readonly newOrders = computed(() => this.orders().filter((order) => order.status === 'CREATED'));
+  readonly dashboardStatusRows = computed(() => this.statusRows(this.dashboard()?.ordersByStatus));
+  readonly reportStatusRows = computed(() => this.statusRows(this.report()?.ordersByStatus));
 
   ngOnInit(): void {
     this.loadStore();
@@ -262,6 +295,30 @@ export class StoreAreaPageComponent implements OnInit {
     return labels[status] ?? status;
   }
 
+  panelBadge(panel: StorePanel): string {
+    const badges: Record<StorePanel, string> = {
+      dashboard: `${this.dashboard()?.ordersToday ?? 0} hoje`,
+      cadastro: this.profile() ? this.storeStatusLabel(this.profile()!.status) : 'Pendente',
+      documentos: `${this.documents().length}`,
+      produtos: `${this.products().length}`,
+      categorias: `${this.categories().length}`,
+      complementos: `${this.products().length} produtos`,
+      horarios: `${this.hours().length}`,
+      estoque: `${this.stockAlerts().length} alertas`,
+      promocoes: `${this.activePromotions().length} ativas`,
+      pedidos: `${this.newOrders().length} novos`,
+      financeiro: this.money(this.financialSummary()?.pendingSettlement ?? 0),
+      relatorios: `${this.report()?.orders ?? 0}`,
+      avaliacoes: `${this.reviews().length}`
+    };
+    return badges[panel];
+  }
+
+  dayName(dayOfWeek: number): string {
+    const labels = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
+    return labels[dayOfWeek] ?? `Dia ${dayOfWeek}`;
+  }
+
   money(value: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value ?? 0);
   }
@@ -301,5 +358,20 @@ export class StoreAreaPageComponent implements OnInit {
       this.error.set('Algumas informacoes da loja nao puderam ser carregadas.');
       return of(fallback);
     }));
+  }
+
+  private statusRows(source?: Record<OrderStatus, number>): StoreStatusRow[] {
+    const statuses: OrderStatus[] = [
+      'CREATED',
+      'ACCEPTED',
+      'PREPARING',
+      'READY_FOR_PICKUP',
+      'OUT_FOR_DELIVERY',
+      'DELIVERED',
+      'CANCELLED',
+      'REFUND_REQUESTED',
+      'REFUNDED'
+    ];
+    return statuses.map((status) => ({ status, label: this.orderStatusLabel(status), value: source?.[status] ?? 0 }));
   }
 }

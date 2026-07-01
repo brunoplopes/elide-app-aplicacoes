@@ -1,6 +1,8 @@
 <section class="elide-section">
   <elide-client-heading title="Rastreamento em tempo real" description="Acompanhe preparo, rota, distancia e previsao de chegada do entregador." />
-  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+  <elide-customer-nav />
+  @if (page.loading()) { <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Carregando rastreamento...</span></div> }
+  @if (page.message()) { <p class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.message() }}</span></p> }
   <div class="tracking-grid">
     <div class="map-panel">
       <span>Entregador a {{ page.distance() }}</span>

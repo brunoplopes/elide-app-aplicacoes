@@ -8,6 +8,63 @@
   font-weight: 800;
 }
 
+.payment-state,
+.saved-methods {
+  margin-bottom: 1rem;
+  border: 1px solid var(--elide-border);
+  border-radius: 8px;
+  background: var(--elide-card);
+  box-shadow: var(--elide-shadow-card);
+}
+
+.payment-state {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  color: var(--elide-muted);
+  font-weight: 850;
+  padding: 1rem;
+}
+
+.saved-methods {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.saved-methods h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.saved-methods > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .75rem;
+}
+
+.saved-methods article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .75rem;
+  border: 1px solid var(--elide-border);
+  border-radius: 8px;
+  background: #fff;
+  padding: .85rem;
+}
+
+.saved-methods mat-icon {
+  color: var(--elide-orange);
+}
+
+.saved-methods small {
+  display: block;
+  margin-top: .2rem;
+  color: var(--elide-muted);
+}
+
 .feature-action {
   justify-self: start;
   border-radius: 999px;

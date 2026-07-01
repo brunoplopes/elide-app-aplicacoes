@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { CustomerNotification } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
 import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'notifications-page',
-  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, MetricCardComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, CustomerNavComponent, MetricCardComponent],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -19,6 +20,7 @@ export class NotificationsPageComponent implements OnInit {
 
   readonly page = this;
   readonly notifications = signal<CustomerNotification[]>([]);
+  readonly loading = signal(true);
   readonly message = signal<string | null>(null);
 
   readonly vm = computed<FeaturePageVm>(() => ({
@@ -36,10 +38,11 @@ export class NotificationsPageComponent implements OnInit {
   }));
 
   ngOnInit(): void {
+    this.loading.set(true);
     this.api.notifications().pipe(catchError(() => {
       this.message.set('Endpoint /customer/notifications ainda nao respondeu.');
       return of([]);
-    })).subscribe((notifications) => this.notifications.set(notifications));
+    }), finalize(() => this.loading.set(false))).subscribe((notifications) => this.notifications.set(notifications));
   }
 
   markRead(notificationId: string): void {

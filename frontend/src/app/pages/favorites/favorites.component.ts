@@ -4,12 +4,13 @@ import { catchError, of } from 'rxjs';
 import { CustomerFavorite, Store } from '../../models/marketplace.models';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
 import { FeaturePageVm, MATERIAL } from '../shared/page-kit';
 
 @Component({
   selector: 'favorites-page',
-  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, MetricCardComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, CustomerNavComponent, MetricCardComponent],
   templateUrl: './favorites.component.html',
   styleUrl: './favorites.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +21,7 @@ export class FavoritesPageComponent implements OnInit {
   readonly page = this;
   readonly favorites = signal<CustomerFavorite[]>([]);
   readonly stores = signal<Store[]>([]);
+  readonly loading = signal(true);
   readonly message = signal<string | null>(null);
 
   readonly vm = computed<FeaturePageVm>(() => ({
@@ -34,7 +36,10 @@ export class FavoritesPageComponent implements OnInit {
       this.message.set('Endpoint /customer/favorites ainda nao respondeu; exibindo lojas do catalogo.');
       return of([]);
     })).subscribe((favorites) => this.favorites.set(favorites));
-    this.api.stores().pipe(catchError(() => of({ content: [], totalElements: 0, totalPages: 0, number: 0 }))).subscribe((stores) => this.stores.set(stores.content));
+    this.api.stores().pipe(catchError(() => of({ content: [], totalElements: 0, totalPages: 0, number: 0 }))).subscribe((stores) => {
+      this.stores.set(stores.content);
+      this.loading.set(false);
+    });
   }
 
   remove(storeId: string): void {

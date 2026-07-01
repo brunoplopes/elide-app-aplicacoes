@@ -104,20 +104,22 @@ export const orders: OrderCard[] = [
 ];
 
 export const featuredStores = [
-  { name: 'Leo', segment: 'Restaurante', fee: 'R$ 6,90', eta: '25-35 min', rating: '4.9' },
-  { name: 'Mata sua fome', segment: 'Lanchonete', fee: 'R$ 5,90', eta: '20-30 min', rating: '4.8' },
-  { name: 'Burguer House', segment: 'Hamburgueria', fee: 'R$ 7,90', eta: '30-40 min', rating: '4.7' },
-  { name: 'Farmacia Saude+', segment: 'Farmacia', fee: 'R$ 4,90', eta: '18-28 min', rating: '4.9' },
-  { name: 'Pizzaria Bella Napoli', segment: 'Pizzaria', fee: 'R$ 8,90', eta: '35-45 min', rating: '4.8' },
-  { name: 'Mercado Central', segment: 'Mercado', fee: 'R$ 9,90', eta: '40-55 min', rating: '4.6' }
+  { name: 'Leo', segment: 'Restaurante', fee: 'R$ 6,90', eta: '25-35 min', rating: '4.9', distance: '1,2 km', open: true, offer: '10% OFF' },
+  { name: 'Mata sua fome', segment: 'Lanchonete', fee: 'R$ 5,90', eta: '20-30 min', rating: '4.8', distance: '1,8 km', open: true, offer: 'Combo do dia' },
+  { name: 'Burguer House', segment: 'Hamburgueria', fee: 'R$ 7,90', eta: '30-40 min', rating: '4.7', distance: '2,4 km', open: true, offer: 'Frete reduzido' },
+  { name: 'Farmacia Saude+', segment: 'Farmacia', fee: 'R$ 4,90', eta: '18-28 min', rating: '4.9', distance: '900 m', open: true, offer: 'PIX15' },
+  { name: 'Pizzaria Bella Napoli', segment: 'Pizzaria', fee: 'R$ 8,90', eta: '35-45 min', rating: '4.8', distance: '3,1 km', open: false, offer: '2 por 1' },
+  { name: 'Mercado Central', segment: 'Mercado', fee: 'R$ 9,90', eta: '40-55 min', rating: '4.6', distance: '2,9 km', open: true, offer: 'MERCADO20' }
 ];
 
 export const categories: PageCard[] = [
   { title: 'Restaurantes', description: 'Pratos completos perto de voce.', icon: 'restaurant', path: '/restaurantes' },
-  { title: 'Lanchonetes', description: 'Lanches, combos e porcoes.', icon: 'lunch_dining', path: '/restaurantes' },
-  { title: 'Pizzarias', description: 'Pizzas e massas para hoje.', icon: 'local_pizza', path: '/restaurantes' },
   { title: 'Mercados', description: 'Compra rapida para casa.', icon: 'shopping_cart', path: '/mercados' },
-  { title: 'Farmacias', description: 'Saude, beleza e conveniencia.', icon: 'medication', path: '/farmacias' }
+  { title: 'Farmacias', description: 'Saude, beleza e conveniencia.', icon: 'medication', path: '/farmacias' },
+  { title: 'Padarias', description: 'Cafe, paes e doces frescos.', icon: 'bakery_dining', path: '/padarias' },
+  { title: 'Lanchonetes', description: 'Lanches, combos e porcoes.', icon: 'lunch_dining', path: '/lanchonetes' },
+  { title: 'Acougues', description: 'Carnes selecionadas para hoje.', icon: 'outdoor_grill', path: '/acougues' },
+  { title: 'Pet Shops', description: 'Racoes, cuidados e brinquedos.', icon: 'pets', path: '/pet-shops' }
 ];
 
 export const coupons: PageCard[] = [

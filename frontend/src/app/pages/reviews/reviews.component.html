@@ -1,6 +1,8 @@
 <section class="elide-section">
   <elide-client-heading title="Avaliacoes" description="Avalie pedidos, lojas e entregadores para melhorar a experiencia da cidade." />
-  @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+  <elide-customer-nav />
+  @if (page.loading()) { <div class="customer-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Carregando pedidos para avaliar...</span></div> }
+  @if (page.message()) { <p class="customer-state error"><mat-icon>info</mat-icon><span>{{ page.message() }}</span></p> }
   <div class="review-grid">
     @for (order of page.orders(); track order.id) {
       <article class="review-card">
@@ -11,10 +13,12 @@
         <button mat-flat-button type="button" (click)="page.send(order)">Enviar avaliacao</button>
       </article>
     } @empty {
+      @if (!page.loading()) {
       <article class="review-card">
         <h2>Nenhum pedido</h2>
         <p>Pedidos retornados por /orders/mine aparecerao aqui.</p>
       </article>
+      }
     }
   </div>
 </section>

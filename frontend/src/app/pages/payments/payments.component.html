@@ -9,6 +9,23 @@
   />
 
   @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+  @if (page.loading()) {
+    <div class="payment-state"><mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner><span>Carregando metodos...</span></div>
+  }
+
+  @if (page.methods().length) {
+    <section class="saved-methods">
+      <h2>Metodos salvos</h2>
+      <div>
+        @for (method of page.methods(); track method.id) {
+          <article>
+            <mat-icon>{{ method.type === 'PIX' ? 'qr_code_2' : method.type === 'CASH' ? 'payments' : 'credit_card' }}</mat-icon>
+            <span><strong>{{ method.label }}</strong><small>{{ method.type }}{{ method.defaultMethod ? ' · padrao' : '' }}</small></span>
+          </article>
+        }
+      </div>
+    </section>
+  }
 
   @if (page.vm().metrics?.length) {
     <div class="metric-grid">

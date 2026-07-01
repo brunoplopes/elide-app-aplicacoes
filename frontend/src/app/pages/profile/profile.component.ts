@@ -5,10 +5,11 @@ import { AuthService } from '../../services/auth.service';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { MATERIAL } from '../shared/page-kit';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 
 @Component({
   selector: 'elide-profile-page',
-  imports: [...MATERIAL, ClientHeadingComponent],
+  imports: [...MATERIAL, ClientHeadingComponent, CustomerNavComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

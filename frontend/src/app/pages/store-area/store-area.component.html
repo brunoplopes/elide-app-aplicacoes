@@ -17,11 +17,26 @@
   }
 
   @if (page.loading()) {
-    <div class="store-alert">
+    <div class="store-alert store-alert-loading">
       <mat-icon>sync</mat-icon>
       <span>Carregando dados do estabelecimento...</span>
     </div>
   }
+
+  <div class="store-command" aria-label="Resumo operacional da loja">
+    <div>
+      <span class="panel-kicker">Operacao</span>
+      <strong>{{ page.profile()?.open ? 'Loja aberta' : 'Loja pausada' }}</strong>
+      <small>{{ page.newOrders().length }} pedido(s) novo(s), {{ page.stockAlerts().length }} alerta(s) de estoque</small>
+    </div>
+    <div class="command-actions">
+      <mat-chip>{{ page.profile() ? page.storeStatusLabel(page.profile()!.status) : 'Cadastro pendente' }}</mat-chip>
+      <button mat-flat-button type="button" (click)="page.loadStore()">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
+    </div>
+  </div>
 
   <div class="metric-grid">
     @for (metric of page.metrics(); track metric.label) {
@@ -40,7 +55,8 @@
         (click)="page.setPanel(panel.id)"
       >
         <mat-icon>{{ panel.icon }}</mat-icon>
-        {{ panel.label }}
+        <span>{{ panel.label }}</span>
+        <small>{{ page.panelBadge(panel.id) }}</small>
       </button>
     }
   </div>
@@ -50,7 +66,7 @@
       @case ('dashboard') {
         <div class="store-grid">
           <article class="store-panel hero-panel">
-            <span class="panel-kicker">Operacao ao vivo</span>
+            <span class="panel-kicker">Dashboard</span>
             <h2>{{ page.profile()?.open ? 'Loja aberta e recebendo pedidos' : 'Loja pausada no momento' }}</h2>
             <p>
               {{ page.dashboard()?.activeProducts ?? 0 }} produtos ativos,
@@ -65,10 +81,26 @@
           </article>
 
           <article class="store-panel compact-panel">
-            <h3>Resumo financeiro</h3>
+            <span class="panel-kicker">Financeiro</span>
+            <h3>Resumo do dia</h3>
             <strong>{{ page.money(page.financialSummary()?.revenue ?? page.dashboard()?.revenueToday ?? 0) }}</strong>
             <span>{{ page.financialSummary()?.deliveredOrders ?? 0 }} pedido(s) entregue(s).</span>
           </article>
+        </div>
+
+        <div class="table-panel">
+          <header>
+            <h3>Pedidos por status</h3>
+            <button mat-button type="button" (click)="page.setPanel('pedidos')"><mat-icon>receipt_long</mat-icon> Ver pedidos</button>
+          </header>
+          @for (row of page.dashboardStatusRows(); track row.status) {
+            <div class="table-row status-table-row">
+              <span><strong>{{ row.label }}</strong><small>{{ row.status }}</small></span>
+              <span>{{ row.value }}</span>
+              <span>pedido(s)</span>
+              <mat-chip>{{ row.value > 0 ? 'Atencao' : 'OK' }}</mat-chip>
+            </div>
+          }
         </div>
       }
 
@@ -86,7 +118,20 @@
           }
         </div>
 
-        <div class="table-panel">
+        <article class="detail-panel">
+          <span class="panel-kicker">Cadastro</span>
+          <h3>{{ page.profile()?.name ?? 'Dados comerciais pendentes' }}</h3>
+          <div class="detail-grid">
+            <span><strong>Segmento</strong>{{ page.profile()?.segment ?? 'Nao informado' }}</span>
+            <span><strong>Pedido minimo</strong>{{ page.money(page.profile()?.minimumOrder ?? 0) }}</span>
+            <span><strong>Taxa de entrega</strong>{{ page.money(page.profile()?.deliveryFee ?? 0) }}</span>
+            <span><strong>Status</strong>{{ page.profile() ? page.storeStatusLabel(page.profile()!.status) : 'Pendente' }}</span>
+          </div>
+        </article>
+      }
+
+      @case ('documentos') {
+        <div class="table-panel section-table">
           <header>
             <h3>Documentos enviados</h3>
             <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Atualizar</button>
@@ -102,12 +147,15 @@
               <mat-chip>{{ document.rejectionReason ?? 'OK' }}</mat-chip>
             </div>
           } @empty {
-            <div class="empty-row">Nenhum documento enviado pela API ainda.</div>
+            <div class="empty-row">
+              <mat-icon>upload_file</mat-icon>
+              Nenhum documento enviado pela API ainda.
+            </div>
           }
         </div>
       }
 
-      @case ('catalogo') {
+      @case ('produtos') {
         <div class="task-grid">
           @for (task of page.catalogTasks(); track task.title) {
             <article class="task-card">
@@ -127,24 +175,174 @@
             <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Sincronizar</button>
           </header>
           @for (product of page.products(); track product.id) {
-            <div class="table-row">
+            <div class="table-row product-row">
               <span>
                 <strong>{{ product.name }}</strong>
                 <small>{{ page.productCategory(product) }}</small>
               </span>
               <span>{{ product.stockQuantity }} un.</span>
               <span>{{ page.money(product.price) }}</span>
-              <button mat-button type="button" (click)="page.toggleProduct(product)" [disabled]="page.actionLoading() === 'product-' + product.id">
+              <button
+                mat-flat-button
+                type="button"
+                (click)="page.toggleProduct(product)"
+                [disabled]="page.actionLoading() === 'product-' + product.id"
+              >
+                {{ product.active ? 'Pausar produto' : 'Ativar produto' }}
+              </button>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>restaurant_menu</mat-icon>
+              Nenhum produto retornado pela API.
+            </div>
+          }
+        </div>
+      }
+
+      @case ('categorias') {
+        <div class="table-panel section-table">
+          <header>
+            <h3>Categorias</h3>
+            <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Atualizar</button>
+          </header>
+          @for (category of page.categories(); track category.id) {
+            <div class="table-row category-row">
+              <span><strong>{{ category.name }}</strong><small>{{ category.icon }}</small></span>
+              <span>{{ category.active ? 'Ativa' : 'Pausada' }}</span>
+              <span>{{ page.products().length }} produto(s)</span>
+              <mat-chip>{{ category.active ? 'ON' : 'OFF' }}</mat-chip>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>category</mat-icon>
+              Nenhuma categoria retornada pela API.
+            </div>
+          }
+        </div>
+      }
+
+      @case ('complementos') {
+        <div class="table-panel section-table">
+          <header>
+            <h3>Complementos</h3>
+            <button mat-button type="button" (click)="page.setPanel('produtos')"><mat-icon>restaurant_menu</mat-icon> Ver produtos</button>
+          </header>
+          @for (product of page.products(); track product.id) {
+            <div class="table-row addon-row">
+              <span><strong>{{ product.name }}</strong><small>Configure adicionais obrigatorios ou opcionais por produto.</small></span>
+              <span>{{ page.productCategory(product) }}</span>
+              <span>{{ product.active ? 'Produto ativo' : 'Produto pausado' }}</span>
+              <mat-chip>API pronta</mat-chip>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>add_circle</mat-icon>
+              Cadastre produtos para configurar complementos.
+            </div>
+          }
+        </div>
+      }
+
+      @case ('horarios') {
+        <div class="table-panel section-table">
+          <header>
+            <h3>Horarios</h3>
+            <button mat-flat-button type="button" (click)="page.syncTodayHour()" [disabled]="page.actionLoading() === 'hours'">
+              <mat-icon>schedule</mat-icon>
+              Atualizar hoje
+            </button>
+          </header>
+          @for (hour of page.hours(); track hour.id) {
+            <div class="table-row operation-row">
+              <span><strong>{{ page.dayName(hour.dayOfWeek) }}</strong><small>{{ hour.active ? 'Ativo' : 'Pausado' }}</small></span>
+              <span>{{ hour.opensAt }}</span>
+              <span>{{ hour.closesAt }}</span>
+              <mat-chip>{{ hour.active ? 'Aberto' : 'Fechado' }}</mat-chip>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>schedule</mat-icon>
+              Nenhum horario configurado.
+            </div>
+          }
+        </div>
+      }
+
+      @case ('estoque') {
+        <div class="store-grid">
+          <article class="store-panel compact-panel">
+            <span class="panel-kicker">Estoque</span>
+            <h3>Alertas de ruptura</h3>
+            <strong>{{ page.stockAlerts().length }}</strong>
+            <span>{{ page.pausedProducts().length }} produto(s) pausado(s).</span>
+          </article>
+          <article class="store-panel compact-panel">
+            <span class="panel-kicker">Disponibilidade</span>
+            <h3>Produtos ativos</h3>
+            <strong>{{ page.dashboard()?.activeProducts ?? 0 }}</strong>
+            <span>Atualize rapidamente a venda de cada item.</span>
+          </article>
+        </div>
+
+        <div class="table-panel">
+          <header>
+            <h3>Controle de estoque</h3>
+            <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Atualizar</button>
+          </header>
+          @for (product of page.products(); track product.id) {
+            <div class="table-row product-row">
+              <span><strong>{{ product.name }}</strong><small>{{ product.stockQuantity <= 5 ? 'Estoque baixo' : 'Estoque OK' }}</small></span>
+              <span>{{ product.stockQuantity }} un.</span>
+              <span>{{ product.active ? 'Ativo' : 'Pausado' }}</span>
+              <button
+                mat-flat-button
+                type="button"
+                (click)="page.toggleProduct(product)"
+                [disabled]="page.actionLoading() === 'product-' + product.id"
+              >
                 {{ product.active ? 'Pausar' : 'Ativar' }}
               </button>
             </div>
           } @empty {
-            <div class="empty-row">Nenhum produto retornado pela API.</div>
+            <div class="empty-row">
+              <mat-icon>inventory_2</mat-icon>
+              Nenhum produto para controle de estoque.
+            </div>
+          }
+        </div>
+      }
+
+      @case ('promocoes') {
+        <div class="table-panel section-table">
+          <header>
+            <h3>Promocoes</h3>
+            <button mat-button type="button" (click)="page.loadStore()"><mat-icon>campaign</mat-icon> Atualizar</button>
+          </header>
+          @for (promotion of page.promotions(); track promotion.id) {
+            <div class="table-row operation-row">
+              <span><strong>{{ promotion.name }}</strong><small>{{ page.dateTime(promotion.startsAt) }}</small></span>
+              <span>{{ page.dateTime(promotion.endsAt) }}</span>
+              <span>{{ promotion.active ? 'Ativa' : 'Pausada' }}</span>
+              <mat-chip>{{ promotion.active ? 'ON' : 'OFF' }}</mat-chip>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>local_offer</mat-icon>
+              Nenhuma promocao retornada pela API.
+            </div>
           }
         </div>
       }
 
       @case ('pedidos') {
+        <div class="section-toolbar">
+          <div>
+            <span class="panel-kicker">Pedidos</span>
+            <h3>{{ page.newOrders().length }} novo(s) pedido(s)</h3>
+          </div>
+          <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Atualizar</button>
+        </div>
         <div class="order-board">
           @for (order of page.orders(); track order.id) {
             <article class="order-card">
@@ -165,66 +363,16 @@
                   [disabled]="!page.nextStatus(order.status) || page.actionLoading() === 'order-' + order.id"
                   (click)="page.advanceOrder(order)"
                 >
-                  {{ page.nextStatus(order.status) ? page.orderStatusLabel(page.nextStatus(order.status)!) : 'Finalizado' }}
+                  {{ page.nextStatus(order.status) ? 'Alterar para ' + page.orderStatusLabel(page.nextStatus(order.status)!) : 'Finalizado' }}
                 </button>
               </footer>
             </article>
           } @empty {
-            <article class="order-card">
+            <article class="order-card empty-card">
+              <mat-icon>receipt_long</mat-icon>
               <p>Nenhum pedido retornado pela API.</p>
             </article>
           }
-        </div>
-      }
-
-      @case ('operacao') {
-        <div class="task-grid">
-          @for (task of page.operationTasks(); track task.title) {
-            <article class="task-card">
-              <mat-icon>{{ task.icon }}</mat-icon>
-              <div>
-                <strong>{{ task.title }}</strong>
-                <p>{{ task.description }}</p>
-                <span>{{ task.status }}</span>
-              </div>
-            </article>
-          }
-        </div>
-
-        <div class="store-grid">
-          <div class="table-panel inline-panel">
-            <header>
-              <h3>Horarios</h3>
-              <button mat-button type="button" (click)="page.syncTodayHour()" [disabled]="page.actionLoading() === 'hours'"><mat-icon>schedule</mat-icon> Hoje</button>
-            </header>
-            @for (hour of page.hours(); track hour.id) {
-              <div class="table-row operation-row">
-                <span><strong>Dia {{ hour.dayOfWeek }}</strong><small>{{ hour.active ? 'Ativo' : 'Pausado' }}</small></span>
-                <span>{{ hour.opensAt }}</span>
-                <span>{{ hour.closesAt }}</span>
-                <mat-chip>{{ hour.active ? 'Aberto' : 'Fechado' }}</mat-chip>
-              </div>
-            } @empty {
-              <div class="empty-row">Nenhum horario configurado.</div>
-            }
-          </div>
-
-          <div class="table-panel inline-panel">
-            <header>
-              <h3>Promocoes</h3>
-              <button mat-button type="button" (click)="page.loadStore()"><mat-icon>campaign</mat-icon> Atualizar</button>
-            </header>
-            @for (promotion of page.promotions(); track promotion.id) {
-              <div class="table-row operation-row">
-                <span><strong>{{ promotion.name }}</strong><small>{{ page.dateTime(promotion.startsAt) }}</small></span>
-                <span>{{ page.dateTime(promotion.endsAt) }}</span>
-                <span>{{ promotion.active ? 'Ativa' : 'Pausada' }}</span>
-                <mat-chip>{{ promotion.active ? 'ON' : 'OFF' }}</mat-chip>
-              </div>
-            } @empty {
-              <div class="empty-row">Nenhuma promocao retornada pela API.</div>
-            }
-          </div>
         </div>
       }
 
@@ -242,40 +390,78 @@
           }
         </div>
 
-        <div class="store-grid">
-          <div class="table-panel inline-panel">
-            <header>
-              <h3>Extrato</h3>
-              <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Atualizar</button>
-            </header>
-            @for (entry of page.financialEntries(); track entry.id) {
-              <div class="table-row operation-row">
-                <span><strong>{{ entry.type }}</strong><small>{{ entry.orderId ? page.shortId(entry.orderId) : 'Lancamento' }}</small></span>
-                <span>{{ page.money(entry.amount) }}</span>
-                <span>{{ page.dateTime(entry.createdAt) }}</span>
-                <mat-chip>OK</mat-chip>
-              </div>
-            } @empty {
-              <div class="empty-row">Nenhum lancamento financeiro retornado.</div>
-            }
-          </div>
+        <div class="table-panel">
+          <header>
+            <h3>Extrato</h3>
+            <button mat-button type="button" (click)="page.loadStore()"><mat-icon>refresh</mat-icon> Atualizar</button>
+          </header>
+          @for (entry of page.financialEntries(); track entry.id) {
+            <div class="table-row operation-row">
+              <span><strong>{{ entry.type }}</strong><small>{{ entry.orderId ? page.shortId(entry.orderId) : 'Lancamento' }}</small></span>
+              <span>{{ page.money(entry.amount) }}</span>
+              <span>{{ page.dateTime(entry.createdAt) }}</span>
+              <mat-chip>OK</mat-chip>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>account_balance_wallet</mat-icon>
+              Nenhum lancamento financeiro retornado.
+            </div>
+          }
+        </div>
+      }
 
-          <div class="table-panel inline-panel">
-            <header>
-              <h3>Avaliacoes</h3>
-              <button mat-button type="button" (click)="page.loadStore()"><mat-icon>reviews</mat-icon> Atualizar</button>
-            </header>
-            @for (review of page.reviews(); track review.id) {
-              <div class="table-row operation-row">
-                <span><strong>{{ review.customerName }}</strong><small>{{ review.comment ?? 'Sem comentario' }}</small></span>
-                <span>{{ review.rating }}/5</span>
-                <span>{{ page.dateTime(review.createdAt) }}</span>
-                <mat-chip>{{ page.shortId(review.orderId) }}</mat-chip>
-              </div>
-            } @empty {
-              <div class="empty-row">Nenhuma avaliacao retornada.</div>
-            }
-          </div>
+      @case ('relatorios') {
+        <div class="store-grid">
+          <article class="store-panel compact-panel">
+            <span class="panel-kicker">Relatorios</span>
+            <h3>Vendas no periodo</h3>
+            <strong>{{ page.money(page.report()?.revenue ?? 0) }}</strong>
+            <span>{{ page.report()?.orders ?? 0 }} pedido(s), ticket medio de {{ page.money(page.report()?.averageTicket ?? 0) }}.</span>
+          </article>
+          <article class="store-panel compact-panel">
+            <span class="panel-kicker">Top produtos</span>
+            <h3>Mais vendidos</h3>
+            <strong>{{ page.dashboard()?.topProducts?.length ?? 0 }}</strong>
+            <span>Produtos com melhor desempenho retornados pela API.</span>
+          </article>
+        </div>
+
+        <div class="table-panel">
+          <header>
+            <h3>Status no periodo</h3>
+            <button mat-button type="button" (click)="page.loadStore()"><mat-icon>bar_chart</mat-icon> Atualizar</button>
+          </header>
+          @for (row of page.reportStatusRows(); track row.status) {
+            <div class="table-row status-table-row">
+              <span><strong>{{ row.label }}</strong><small>{{ row.status }}</small></span>
+              <span>{{ row.value }}</span>
+              <span>pedido(s)</span>
+              <mat-chip>{{ row.value > 0 ? 'Com dados' : 'Sem dados' }}</mat-chip>
+            </div>
+          }
+        </div>
+      }
+
+      @case ('avaliacoes') {
+        <div class="table-panel section-table">
+          <header>
+            <h3>Avaliacoes</h3>
+            <button mat-button type="button" (click)="page.loadStore()"><mat-icon>reviews</mat-icon> Atualizar</button>
+          </header>
+          @for (review of page.reviews(); track review.id) {
+            <div class="table-row operation-row">
+              <span><strong>{{ review.customerName }}</strong><small>{{ review.comment ?? 'Sem comentario' }}</small></span>
+              <span>{{ review.rating }}/5</span>
+              <span>{{ page.dateTime(review.createdAt) }}</span>
+              <mat-chip>{{ page.shortId(review.orderId) }}</mat-chip>
+            </div>
+          } @empty {
+            <div class="empty-row">
+              <mat-icon>reviews</mat-icon>
+              Nenhuma avaliacao retornada.
+            </div>
+          }
         </div>
       }
     }

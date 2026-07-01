@@ -1,9 +1,9 @@
 Leia docs/PROMPT_MASTER.md.
 
-Leia TASKS.md.
+Leia dosc/TASKS.md.
 
 Execute apenas a próxima tarefa.
 
-Atualize TASKS.md marcando-a como concluída.
+Atualize docs/TASKS.md marcando-a como concluída.
 
 Não altere outras funcionalidades.

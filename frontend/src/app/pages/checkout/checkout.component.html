@@ -1,24 +1,54 @@
 <section class="elide-section">
   <elide-client-heading eyebrow="Pagamento seguro" title="Checkout" description="Revise endereco, cupom, entrega e escolha PIX, cartao ou dinheiro." />
-  <div class="checkout-grid">
-    <article class="panel-card form-panel elide-form-card">
-      <h2>Entrega e pagamento</h2>
-      <p>Confirme os dados antes de finalizar.</p>
-      <form [formGroup]="page.form">
-        <mat-form-field appearance="outline"><mat-label>Endereco de entrega</mat-label><mat-select formControlName="addressId"><mat-option value="">Endereco padrao</mat-option></mat-select></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>Cupom</mat-label><input matInput formControlName="couponCode" (blur)="page.applyCoupon()"></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>Forma de pagamento</mat-label><mat-select formControlName="paymentMethod"><mat-option value="PIX">PIX instantaneo</mat-option><mat-option value="CREDIT_CARD">Cartao de credito</mat-option><mat-option value="DEBIT_CARD">Cartao de debito</mat-option><mat-option value="CASH">Dinheiro na entrega</mat-option></mat-select></mat-form-field>
-      </form>
-      <div class="pix-box"><mat-icon>qr_code_2</mat-icon><div><strong>PIX pronto para gateway</strong><span>QR Code e copia e cola serao gerados apos confirmar.</span></div></div>
+
+  @if (page.isEmpty()) {
+    <article class="panel-card empty-checkout">
+      <mat-icon>shopping_cart_checkout</mat-icon>
+      <strong>Seu carrinho esta vazio</strong>
+      <span>Adicione itens antes de seguir para pagamento.</span>
+      <a mat-flat-button routerLink="/restaurantes">Escolher produtos</a>
     </article>
-    <article class="panel-card summary">
-      <h2>Resumo</h2>
-      <div><span>Itens</span><strong>{{ page.cart.subtotal() | currency:'BRL' }}</strong></div>
-      <div><span>Entrega</span><strong>{{ page.cart.deliveryFee() | currency:'BRL' }}</strong></div>
-      <div class="discount"><span>Cupom</span><strong>- {{ page.cart.discount() | currency:'BRL' }}</strong></div>
-      <footer><span>Total</span><strong>{{ page.cart.total() | currency:'BRL' }}</strong></footer>
-      @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
-      <button mat-flat-button type="button" (click)="page.finish()" [disabled]="page.loading()">Finalizar pedido</button>
-    </article>
-  </div>
+  } @else {
+    <div class="checkout-grid">
+      <article class="panel-card form-panel elide-form-card">
+        <h2>Entrega e pagamento</h2>
+        <p>Confirme os dados antes de finalizar.</p>
+        <form [formGroup]="page.form">
+          <mat-form-field appearance="outline"><mat-label>Endereco de entrega</mat-label><mat-select formControlName="addressId"><mat-option value="">Endereco padrao</mat-option></mat-select></mat-form-field>
+          <div class="coupon-row">
+            <mat-form-field appearance="outline"><mat-label>Cupom</mat-label><input matInput formControlName="couponCode"></mat-form-field>
+            <button mat-button type="button" (click)="page.applyCoupon()">Aplicar</button>
+          </div>
+          <mat-form-field appearance="outline"><mat-label>Forma de pagamento</mat-label><mat-select formControlName="paymentMethod">@for (option of page.paymentOptions; track option.value) { <mat-option [value]="option.value">{{ option.label }}</mat-option> }</mat-select></mat-form-field>
+        </form>
+
+        <div class="payment-options" aria-label="Forma de pagamento">
+          @for (option of page.paymentOptions; track option.value) {
+            <button type="button" [class.active]="page.selectedPayment() === option.value" (click)="page.selectPayment(option.value)">
+              <mat-icon>{{ option.icon }}</mat-icon>
+              <span><strong>{{ option.label }}</strong><small>{{ option.description }}</small></span>
+            </button>
+          }
+        </div>
+
+        <div class="pix-box"><mat-icon>{{ page.selectedPayment() === 'CASH' ? 'payments' : page.selectedPayment() === 'PIX' ? 'qr_code_2' : 'credit_card' }}</mat-icon><div><strong>{{ page.selectedPayment() === 'PIX' ? 'PIX pronto para gateway' : page.selectedPayment() === 'CASH' ? 'Pagamento na entrega' : 'Cartao pronto para gateway' }}</strong><span>{{ page.paymentHint() }}</span></div></div>
+      </article>
+      <article class="panel-card summary sticky-summary">
+        <h2>Resumo</h2>
+        <div class="order-items">
+          @for (item of page.cart.items(); track item.product.id) {
+            <div><span>{{ item.quantity }}x {{ item.product.name }}</span><strong>{{ page.cart.itemTotal(item) | currency:'BRL' }}</strong></div>
+          }
+        </div>
+        <div><span>Subtotal</span><strong>{{ page.cart.subtotal() | currency:'BRL' }}</strong></div>
+        <div><span>Entrega</span><strong>{{ page.cart.deliveryFee() | currency:'BRL' }}</strong></div>
+        <div class="discount"><span>Cupom</span><strong>- {{ page.cart.discount() | currency:'BRL' }}</strong></div>
+        <footer><span>Total</span><strong>{{ page.cart.total() | currency:'BRL' }}</strong></footer>
+        @if (page.message()) { <p class="api-message">{{ page.message() }}</p> }
+        <button mat-flat-button type="button" (click)="page.finish()" [disabled]="page.loading() || page.isEmpty()">
+          {{ page.loading() ? 'Finalizando...' : 'Finalizar pedido' }}
+        </button>
+      </article>
+    </div>
+  }
 </section>

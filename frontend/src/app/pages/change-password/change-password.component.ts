@@ -4,6 +4,7 @@ import { ClientHeadingComponent } from '../shared/client-heading.component';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'elide-change-password-page',
@@ -18,6 +19,7 @@ export class ChangePasswordPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  readonly loading = signal(false);
   readonly message = signal<string | null>(null);
   readonly form = this.fb.nonNullable.group({
     currentPassword: ['', Validators.required],
@@ -35,7 +37,11 @@ export class ChangePasswordPageComponent {
       this.message.set('A confirmacao precisa ser igual a nova senha.');
       return;
     }
-    this.auth.changePassword(value).subscribe({
+    this.loading.set(true);
+    this.message.set(null);
+    this.auth.changePassword(value).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
       next: () => {
         this.message.set('Senha atualizada com sucesso.');
         void this.router.navigateByUrl(this.auth.isAdmin() ? '/admin/dashboard' : '/cliente');

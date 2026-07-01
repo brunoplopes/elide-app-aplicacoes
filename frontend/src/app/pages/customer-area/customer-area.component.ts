@@ -3,12 +3,13 @@ import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { CustomerApiService } from '../../services/customer-api.service';
 import { ClientHeadingComponent } from '../shared/client-heading.component';
+import { CustomerNavComponent } from '../shared/customer-nav.component';
 import { MetricCardComponent } from '../shared/metric-card.component';
 import { FeaturePageVm, MATERIAL, PageMetric } from '../shared/page-kit';
 
 @Component({
   selector: 'customer-area-page',
-  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, MetricCardComponent],
+  imports: [...MATERIAL, RouterLink, ClientHeadingComponent, CustomerNavComponent, MetricCardComponent],
   templateUrl: './customer-area.component.html',
   styleUrl: './customer-area.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

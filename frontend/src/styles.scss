@@ -177,6 +177,29 @@ button,
   font-weight: 800 !important;
 }
 
+.customer-state {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 0 0 1rem;
+  border: 1px solid var(--elide-border);
+  border-radius: 8px;
+  background: var(--elide-card);
+  color: var(--elide-muted);
+  padding: .95rem 1rem;
+  box-shadow: var(--elide-shadow-card);
+  font-weight: 850;
+}
+
+.customer-state mat-icon {
+  color: var(--elide-orange);
+}
+
+.customer-state.error {
+  border-color: rgba(255, 107, 0, .22);
+  background: rgba(255, 107, 0, .08);
+}
+
 .dark .feature-card,
 .dark .feature-card strong {
   color: white;
@@ -186,8 +209,9 @@ button,
   display: grid;
   gap: 1rem;
   min-width: 0;
+  width: 100%;
   border: 1px solid rgba(30, 30, 30, .12);
-  border-radius: 24px;
+  border-radius: 8px;
   background: #ffffff;
   color: var(--elide-ink);
   padding: 1.75rem;
@@ -216,6 +240,7 @@ button,
 .elide-form-card .mat-mdc-form-field {
   width: 100%;
   min-width: 0;
+  margin: 0;
 }
 
 .elide-form-card .mat-mdc-form-field-subscript-wrapper {
@@ -240,16 +265,18 @@ button,
 }
 
 .elide-form-card .mat-mdc-text-field-wrapper {
-  height: 44px;
-  min-height: 44px;
+  height: 48px;
+  min-height: 48px;
   border: 1px solid rgba(30, 30, 30, .14);
   border-radius: 12px !important;
+  background: #fff;
   box-shadow: 0 1px 3px rgba(30, 30, 30, .08);
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 
 .dark .elide-form-card .mat-mdc-text-field-wrapper {
   border-color: rgba(255, 255, 255, .16);
+  background: #171717;
 }
 
 .elide-form-card .mat-mdc-form-field:hover .mat-mdc-text-field-wrapper {
@@ -273,12 +300,17 @@ button,
 }
 
 .elide-form-card .mat-mdc-form-field-infix {
+  display: flex;
+  align-items: center;
   min-height: 0;
-  padding-top: 10px !important;
+  height: 100%;
+  padding-top: 12px !important;
   padding-bottom: 8px !important;
 }
 
 .elide-form-card .mat-mdc-form-field:has(textarea) .mat-mdc-form-field-infix {
+  display: block;
+  height: auto;
   padding-top: 14px !important;
   padding-bottom: 14px !important;
 }
@@ -292,12 +324,12 @@ button,
 }
 
 .elide-form-card .mdc-text-field--outlined .mat-mdc-floating-label {
-  top: 22px;
+  top: 24px;
 }
 
 .elide-form-card .mdc-text-field--outlined.mdc-text-field--focused .mat-mdc-floating-label,
 .elide-form-card .mdc-text-field--outlined.mdc-text-field--label-floating .mat-mdc-floating-label {
-  transform: translateY(-31px) scale(.75);
+  transform: translateY(-33px) scale(.75);
 }
 
 .dark .elide-form-card .mat-mdc-floating-label {
@@ -345,6 +377,10 @@ button,
   border: 0 !important;
 }
 
+.elide-form-card .mdc-notched-outline {
+  display: none;
+}
+
 .elide-form-card .mdc-notched-outline__leading {
   border-radius: 12px 0 0 12px !important;
 }
@@ -360,7 +396,20 @@ button,
 }
 
 .elide-form-card input {
+  height: 100% !important;
   padding: 0 !important;
+}
+
+.elide-form-card .mat-mdc-select {
+  width: 100%;
+}
+
+.elide-form-card .mat-mdc-select-trigger {
+  height: 100%;
+}
+
+.elide-form-card .mat-mdc-select-value {
+  color: var(--elide-ink);
 }
 
 .dark .elide-form-card input,
@@ -371,7 +420,7 @@ button,
 .elide-form-card .mat-mdc-unelevated-button,
 .elide-form-card .mat-mdc-outlined-button {
   width: 100%;
-  height: 42px;
+  min-height: 44px;
   border-radius: 12px !important;
   font-weight: 800 !important;
 }
@@ -380,6 +429,32 @@ button,
   background: var(--elide-gradient) !important;
   color: white !important;
   box-shadow: var(--elide-shadow-elegant);
+}
+
+.elide-form-card .mat-mdc-unelevated-button:disabled,
+.elide-form-card .mat-mdc-outlined-button:disabled {
+  background: rgba(30, 30, 30, .12) !important;
+  color: rgba(30, 30, 30, .45) !important;
+  box-shadow: none;
+}
+
+.dark .elide-form-card .mat-mdc-unelevated-button:disabled,
+.dark .elide-form-card .mat-mdc-outlined-button:disabled {
+  background: rgba(255, 255, 255, .16) !important;
+  color: rgba(255, 255, 255, .55) !important;
+}
+
+.elide-form-card .api-message,
+.elide-form-card .form-message,
+.elide-form-card .error {
+  display: block;
+  margin: 0;
+  border-radius: 8px;
+  background: rgba(255, 107, 0, .08);
+  color: var(--elide-orange);
+  padding: .75rem .85rem;
+  font-weight: 850;
+  line-height: 1.35;
 }
 
 .elide-google-button {
